@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <link href="/static/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+            integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            $.datepicker.regional['ru'] = {
+                closeText: 'Закрыть',
+                prevText: 'Предыдущий',
+                nextText: 'Следующий',
+                currentText: 'Сегодня',
+                monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+                dayNames: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
+                dayNamesShort: ['вск', 'пнд', 'втр', 'срд', 'чтв', 'птн', 'сбт'],
+                dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                weekHeader: 'Не',
+                dateFormat: 'dd.mm.yy',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ''
+            };
+            $.datepicker.setDefaults($.datepicker.regional['ru']);
+            $("#datepicker").datepicker({dateFormat: 'dd.mm.yy'});
+        });
+
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.715">
+    <title>ИТ-класс</title>
+</head>
+<body>
+<div class="container-fuild">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a href="/" class="navbar-brand">
+            <img class="img-fluid mx-3"
+                 style="width: 100px; object-fit: cover; height:100px;"
+                 src="/static/images/itclass-logo.png"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item mx-1">
+                    <a class="nav-link" href="/">ГЛАВНАЯ<span class="sr-only">(current)</span></a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="/rate">РЕЙТИНГ УЧАСТНИКОВ</a>
+                </li>
+                
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="/works">МОИ РАБОТЫ</a>
+                </li>
+                
+                
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                
+                <a class="nav-link text-dark disabled p-0" href="/account/">Хамид Карим</a>
+                <a href="/account/">
+                    <img class="img-fluid mx-3"
+                         style="width: 30px; object-fit: cover; height:30px;"
+                         src="/static/images/support.png"></a>
+                
+                
+                <a class="btn btn-outline-danger my-2 my-sm-0" href="/logout">Выйти</a>
+                
+            </form>
+        </div>
+    </nav>
+    
+
+
+<div class="container-xl my-4 bg-light">
+    <div class="row">
+        <div class="col col-xl-3 col-lg-3 col-md-3 col-sm-12">
+            <h3 class="my-3">
+                Карим Хамид
+            </h3>
+            <img src="/itclass/media/user-2.png" class="img-fluid">
+            <div class="row py-3">
+<!--                <div class="col-12 text-left"><a class="text-dark disabled" href="#">редактировать фотографию</a></div>-->
+                <div class="col"><a href="/password-change/" class="btn btn-block btn-info btn-sm" role="button">Изменить пароль учетной записи</a></div>
+            </div>
+        </div>
+        <div class="col">
+            <h3 class="pt-3">
+                Список посещенных мероприятий
+            </h3>
+            <table class="table table-sm text-center my-4">
+                <thead class="thead text-center">
+                <tr>
+                    <th class="text-left">Дата посещения</th>
+                    <th class="text-left">Название</th>
+                    <th>Организатор</th>
+                    <th>Документ</th>
+                </tr>
+                </thead>
+                
+                <tr >
+                    <td class="align-middle">3 декабря 2019 г. </td>
+                    <td class="text-left align-middle">Мастер-класс по криптографии &quot;Черные кабинеты&quot;</td>
+                    <td class="text-left align-middle">МИЭМ НИУ ВШЭ</td>
+                    <td class="text-center align-middle">
+                        <form method="post" action="/statistic/pupil/download/">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="YBXXdN8vdcWscEI5pojHKF7PKZ58PGJTQUoWHm5hQIMLC9ysg9isG2maANyVToT2">
+                            <input type="hidden" name="file_base_dir" value="verification_files/IMG_4189.HEIC">
+                            <input type="hidden" name="usr_pk" value="24">
+                            <button type="submit" class="btn btn-outline-success">Скачать</button>
+                        </form>
+                    </td>
+                </tr>
+
+                
+                <tr >
+                    <td class="align-middle">10 декабря 2019 г. </td>
+                    <td class="text-left align-middle">Мастер-класс по криптоанализу &quot;За 7ю печатями&quot;</td>
+                    <td class="text-left align-middle">МИЭМ НИУ ВШЭ</td>
+                    <td class="text-center align-middle">
+                        <form method="post" action="/statistic/pupil/download/">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="YBXXdN8vdcWscEI5pojHKF7PKZ58PGJTQUoWHm5hQIMLC9ysg9isG2maANyVToT2">
+                            <input type="hidden" name="file_base_dir" value="verification_files/IMG_1825.HEIC">
+                            <input type="hidden" name="usr_pk" value="24">
+                            <button type="submit" class="btn btn-outline-success">Скачать</button>
+                        </form>
+                    </td>
+                </tr>
+
+                
+                <tr >
+                    <td class="align-middle">12 декабря 2019 г. </td>
+                    <td class="text-left align-middle">Мероприятия для IT-классов: «Разработка мобильных игр с использованием платформы Unity»</td>
+                    <td class="text-left align-middle">НИЯУ МИФИ</td>
+                    <td class="text-center align-middle">
+                        <form method="post" action="/statistic/pupil/download/">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="YBXXdN8vdcWscEI5pojHKF7PKZ58PGJTQUoWHm5hQIMLC9ysg9isG2maANyVToT2">
+                            <input type="hidden" name="file_base_dir" value="verification_files/IMG_5109.HEIC">
+                            <input type="hidden" name="usr_pk" value="24">
+                            <button type="submit" class="btn btn-outline-success">Скачать</button>
+                        </form>
+                    </td>
+                </tr>
+
+                
+                <tr >
+                    <td class="align-middle">14 декабря 2019 г. </td>
+                    <td class="text-left align-middle">Первая лекция по тематике «Иммерсивность нарратива в новых медиа, или как рассказывать истории через компьютерные игры»</td>
+                    <td class="text-left align-middle">ФКН НИУ ВШЭ</td>
+                    <td class="text-center align-middle">
+                        <form method="post" action="/statistic/pupil/download/">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="YBXXdN8vdcWscEI5pojHKF7PKZ58PGJTQUoWHm5hQIMLC9ysg9isG2maANyVToT2">
+                            <input type="hidden" name="file_base_dir" value="verification_files/IMG_5139.JPG">
+                            <input type="hidden" name="usr_pk" value="24">
+                            <button type="submit" class="btn btn-outline-success">Скачать</button>
+                        </form>
+                    </td>
+                </tr>
+
+                
+                <tr >
+                    <td class="align-middle">19 декабря 2019 г. </td>
+                    <td class="text-left align-middle">Лекция &quot;Расширенная реальность: как мы будем взаимодействовать с компьютерами в ближайшем будущем&quot;</td>
+                    <td class="text-left align-middle">ФКН НИУ ВШЭ</td>
+                    <td class="text-center align-middle">
+                        <form method="post" action="/statistic/pupil/download/">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="YBXXdN8vdcWscEI5pojHKF7PKZ58PGJTQUoWHm5hQIMLC9ysg9isG2maANyVToT2">
+                            <input type="hidden" name="file_base_dir" value="verification_files/IMG_5188.HEIC">
+                            <input type="hidden" name="usr_pk" value="24">
+                            <button type="submit" class="btn btn-outline-success">Скачать</button>
+                        </form>
+                    </td>
+                </tr>
+
+                
+                <tr >
+                    <td class="align-middle">21 января 2020 г. </td>
+                    <td class="text-left align-middle">Министр, руководитель ДИТ Москвы «Технологии, используемые в управлении мегаполисом»</td>
+                    <td class="text-left align-middle">ГАОУ ДПО &quot;ТемоЦентр&quot;</td>
+                    <td class="text-center align-middle">
+                        <form method="post" action="/statistic/pupil/download/">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="YBXXdN8vdcWscEI5pojHKF7PKZ58PGJTQUoWHm5hQIMLC9ysg9isG2maANyVToT2">
+                            <input type="hidden" name="file_base_dir" value="verification_files/IMG_5215.HEIC">
+                            <input type="hidden" name="usr_pk" value="24">
+                            <button type="submit" class="btn btn-outline-success">Скачать</button>
+                        </form>
+                    </td>
+                </tr>
+
+                
+                <tr >
+                    <td class="align-middle">23 декабря 2019 г. </td>
+                    <td class="text-left align-middle">Лекция  &quot;Как разрабатывают программы сейчас и что, возможно, поменяется в ближайшее время?&quot;</td>
+                    <td class="text-left align-middle">ФКН НИУ ВШЭ</td>
+                    <td class="text-center align-middle">
+                        <form method="post" action="/statistic/pupil/download/">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="YBXXdN8vdcWscEI5pojHKF7PKZ58PGJTQUoWHm5hQIMLC9ysg9isG2maANyVToT2">
+                            <input type="hidden" name="file_base_dir" value="verification_files/IMG_6259.jpg">
+                            <input type="hidden" name="usr_pk" value="24">
+                            <button type="submit" class="btn btn-outline-success">Скачать</button>
+                        </form>
+                    </td>
+                </tr>
+
+                
+            </table>
+            <a class="btn btn-success btn-lg btn-block" href="add_events" role="button">Добавить новое мероприятие</a>
+            <p class="my-3">Количество посещенных мероприятий: 7 </p>
+            <p class="my-3">Общий рейтинг: 7</p>
+        </div>
+    </div>
+    
+
+
+<form class="my-4" action="/statistic/pupil/48/add_events" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrfmiddlewaretoken" value="YBXXdN8vdcWscEI5pojHKF7PKZ58PGJTQUoWHm5hQIMLC9ysg9isG2maANyVToT2">
+    <div class="form-group">
+        <label for="datepicker">Дата посещения</label>
+        <input type="text" class="form-control col-xl-2" id="datepicker" placeholder="Введите дату" name="date"
+               required>
+    </div>
+    <div class="form-group">
+        <label for="exampleInput">Название мероприятия</label>
+        <input type="text" class="form-control" id="exampleInput" placeholder="Название мероприятия" name="name"
+               required>
+    </div>
+    <div class="form-group">
+        <label for="exampleInput1">Организатор мероприятия</label>
+        <input type="text" class="form-control" id="exampleInput1" placeholder="Название организатора"
+               name="organization" required>
+    </div>
+    <div class="custom-file  col-xl-3 pt-5">
+        <input type="file" class="custom-file-input" id="customFile" name="verification_file" required>
+        <label class="custom-file-label" for="customFile">Выберите файл</label>
+    </div>
+    <script>
+        $('#customFile').on('change', function () {
+            //get the file name
+            var fileName = $(this).val();
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html('Файл добавлен');
+        })
+    </script>
+    <div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a class="btn btn-danger" href="/statistic/pupil/48" role="button">Отмена</a>
+    </div>
+</form>
+</div>
+
+    <footer id="sticky-footer" class="py-4 bg-dark text-white-50 mt-5">
+        <div class="container text-center">
+            <small>ГБОУ школа № 1158. &copy; Все права защищены</small>
+        </div>
+    </footer>
+</div>
+</body>
+</html>

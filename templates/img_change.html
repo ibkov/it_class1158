@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block main %}
+{% load static %}
+<div class="container-xl my-4 bg-light">
+    <div class="row">
+        <div class="col col-xl-3 col-lg-3 col-md-3 col-sm-12">
+            <h3 class="my-3">
+                {{ puples.name }} {{puples.surname}}
+            </h3>
+            <img src="{{ puples.image.url }}" class="img-fluid">
+            <div class="row no-gutters py-3">
+                <div class="col-12"><a href="/statistic/pupil/{{ puples.pk }}/img-change/"
+                                       class="btn btn-block btn-info btn-sm" role="button">Изменить фотографию
+                    профиля</a></div>
+                <div class="col-12 pt-1"><a href="/password-change/" class="btn btn-block btn-info btn-sm"
+                                            role="button">Изменить
+                    пароль учетной записи</a></div>
+                <div class="col-12 py-3">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="custom-file col-12 pt-5">
+                            <div class="form-group">
+                                <input type="file" class="custom-file-input" id="customFile" name="image" required>
+                                <label class="custom-file-label" for="customFile">Выберите файл</label>
+                            </div>
+                            <script>
+                                $('#customFile').on('change', function () {
+                                    //get the file name
+                                    var fileName = $(this).val();
+                                    //replace the "Choose a file" label
+                                    $(this).next('.custom-file-label').html('Файл добавлен');
+                                })
+                            </script>
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col p-1"><button type="submit" class="btn btn-primary btn-block btn-sm">Сохранить</button></div>
+                            <div class="col p-1"> <a class="btn btn-danger btn-block btn-sm" href="/statistic/pupil/{{ puples.id }}" role="button">Отмена</a></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <h3 class="pt-3">
+                Список посещенных мероприятий
+            </h3>
+            <table class="table table-sm text-center my-4">
+                <thead class="thead text-center">
+                <tr>
+                    <th class="text-left">Дата посещения</th>
+                    <th class="text-left">Название</th>
+                    <th>Организатор</th>
+                    <th>Документ</th>
+                </tr>
+                </thead>
+                {% for event in allevents %}
+                <tr {% if event.check is False %} class="alert-warning" {% endif %}>
+                    <td class="align-middle">{{ event.date }} {% if event.check is False %}<p class="alert-warning">На
+                        модерации</p>{% endif %}
+                    </td>
+                    <td class="text-left align-middle">{{ event.name }}</td>
+                    <td class="text-left align-middle">{{ event.organization }}</td>
+                    <td class="text-center align-middle">
+                        <form method="post" action="{% url 'verification_file_download' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="file_base_dir" value="{{ event.verification_file }}">
+                            <input type="hidden" name="usr_pk" value="{{ puples.user.pk }}">
+                            <button type="submit" class="btn btn-outline-success">Скачать</button>
+                        </form>
+                    </td>
+                </tr>
+
+                {% endfor %}
+            </table>
+            <a class="btn btn-success btn-lg btn-block" href="add_events" role="button">Добавить новое мероприятие</a>
+            <p class="my-3">Количество посещенных мероприятий: {{ events_count }} </p>
+            <p class="my-3">Общий рейтинг: {{ puples.rate }}</p>
+        </div>
+    </div>
+  </div>
+    {% endblock %}
+{% block detail_active %} active{% endblock %}
