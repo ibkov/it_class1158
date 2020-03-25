@@ -47,6 +47,7 @@ class DaysTask(models.Model):
     discription_task = HTMLField("Описание задачи")
     result = models.CharField(null=True, verbose_name="Результат", max_length=200)
     count_answer = models.IntegerField(default=0, verbose_name="Количество человек, которые могут решить задачу (указать отрицательное число)")
+    id_answers = models.CharField(default="", verbose_name="ID учеников, кто дал правильный ответ", max_length=200, blank=True)
 
     class Meta:
         verbose_name = "Задача дня"

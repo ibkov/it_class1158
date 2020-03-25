@@ -32,6 +32,7 @@ class MainView(ListView):
 class TasksView(ListView):
     model = DaysTask
     template_name = "task_day.html"
+    mass_rate = [5, 3]
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -40,20 +41,23 @@ class TasksView(ListView):
         context['date_task'] = DaysTask.objects.get().date
         context['count_of_answer'] = DaysTask.objects.get().count_answer
         context['count_of_puples'] = -DaysTask.objects.get().count_answer
-        context['check'] = True
+        context['list_answ'] = [int(i) for i in DaysTask.objects.get().id_answers.split()]
+        context['score'] = len([int(i) for i in DaysTask.objects.get().id_answers.split()])
         return context
 
+
+
     def post(self, request):
-        mass_rate = [5, 3]
         if request.POST["result"] == DaysTask.objects.get().result and DaysTask.objects.get().count_answer < 0:
             Events.objects.create(name=f"Задача дня \"{DaysTask.objects.get().name_task}\"", date=datetime.date.today(),
                                   organization="ГБОУ Школа 1158",
                                   events=Puples.objects.get(user=request.user.id),
-                                  event_rate=mass_rate[DaysTask.objects.get().count_answer], check=True,
+                                  event_rate=self.mass_rate[DaysTask.objects.get().count_answer], check=True,
                                   verification_file="123.jpg")
-            count_res = DaysTask.objects.get()
-            count_res.count_answer += 1
-            count_res.save()
+            task = DaysTask.objects.get()
+            task.count_answer += 1
+            task.id_answers += str(Puples.objects.get(user=request.user.id).user.id) + " "
+            task.save()
             return redirect("/task_day")
         return redirect("/task_day")
 
