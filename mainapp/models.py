@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from tinymce.models import HTMLField
 
 class Puples(models.Model):
     name = models.TextField("Имя", null=True)
@@ -39,4 +40,15 @@ class Works(models.Model):
     class Meta:
         verbose_name = "Работы учеников"
         verbose_name_plural = "Работы учеников"
+
+class DaysTask(models.Model):
+    date = models.DateField("Дата", null=True)
+    name_task = models.CharField("Название задачи", max_length=200)
+    discription_task = HTMLField("Описание задачи")
+    result = models.CharField(null=True, verbose_name="Результат", max_length=200)
+    count_answer = models.IntegerField(default=0, verbose_name="Количество человек, которые могут решить задачу (указать отрицательное число)")
+
+    class Meta:
+        verbose_name = "Задача дня"
+        verbose_name_plural = "Задача дня"
 

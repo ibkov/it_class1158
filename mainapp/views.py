@@ -9,12 +9,13 @@ from django.views.generic import ListView, CreateView
 from django.views.generic.base import View, TemplateView
 from django.views.generic.detail import DetailView
 from django.conf import settings
-from .models import Puples, Events, Works
-from .forms import EventsForm, AddEventForm, ImgChangeForm
+from .models import Puples, Events, Works, DaysTask
+from .forms import EventsForm, AddEventForm, ImgChangeForm, AnswerTask
 from django.contrib.auth import login
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
 from django.urls import reverse_lazy
 from django.core.mail import send_mail
+import datetime
 
 
 class MainView(ListView):
@@ -27,14 +28,35 @@ class MainView(ListView):
         context['events_new'] = Events.objects.filter(check=False).count()
         return context
 
+
 class TasksView(ListView):
-    queryset = Works.objects.all()
+    model = DaysTask
     template_name = "task_day.html"
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['events_new'] = Events.objects.filter(check=False).count()
+        context['name_task'] = DaysTask.objects.get().name_task
+        context['discription_task'] = DaysTask.objects.get().discription_task
+        context['date_task'] = DaysTask.objects.get().date
+        context['count_of_answer'] = DaysTask.objects.get().count_answer
+        context['count_of_puples'] = -DaysTask.objects.get().count_answer
+        context['check'] = True
         return context
+
+    def post(self, request):
+        mass_rate = [5, 3]
+        if request.POST["result"] == DaysTask.objects.get().result and DaysTask.objects.get().count_answer < 0:
+            Events.objects.create(name=f"Задача дня \"{DaysTask.objects.get().name_task}\"", date=datetime.date.today(),
+                                  organization="ГБОУ Школа 1158",
+                                  events=Puples.objects.get(user=request.user.id),
+                                  event_rate=mass_rate[DaysTask.objects.get().count_answer], check=True,
+                                  verification_file="123.jpg")
+            count_res = DaysTask.objects.get()
+            count_res.count_answer += 1
+            count_res.save()
+            return redirect("/task_day")
+        return redirect("/task_day")
+
 
 def verificationFileDownload(request):
     usr_pk = request.POST.get("usr_pk")
@@ -44,7 +66,7 @@ def verificationFileDownload(request):
     file_path = os.path.join(settings.MEDIA_ROOT, file_base_dir)
     try:
         with open(file_path, "rb") as file:
-            response = HttpResponse(file.read(), content_type="application/vnd.ms-excel")
+            response = HttpResponse(file.read(), content_type="application")
             response['Content-Disposition'] = 'inline; filename="verification' + os.path.splitext(file_base_dir)[
                 1] + '"'
             return response
@@ -70,11 +92,6 @@ class PuplesView(ListView):
         context['events_new'] = Events.objects.filter(check=False).count()
         return context
 
-
-# class PostDetailView(View):
-#     def get(self, request, pk):
-#         model = Puples.objects.get(id=pk)
-#         return render(request, "statistic/pupil/single_puple.html", { "single_puple" : model })
 
 def account(request):
     var = request.user.puples.pk
@@ -123,7 +140,8 @@ class PostDetailView(DetailView):
         context['events_count'] = Events.objects.filter(events__pk=self.kwargs['pk'], check=True).count()
         context['events_new'] = Events.objects.filter(check=False).count()
         context['allevents'] = Events.objects.filter(events__pk=self.kwargs['pk']).order_by('-date')
-        context['rate_event'] = sum(map(lambda x: x.event_rate, Events.objects.filter(events__pk=self.kwargs['pk'], check=True)))
+        context['rate_event'] = sum(
+            map(lambda x: x.event_rate, Events.objects.filter(events__pk=self.kwargs['pk'], check=True)))
         return context
 
 
@@ -149,9 +167,11 @@ class AddEventView(DetailView):
 
     def post(self, request, pk):
         form = EventsForm(request.POST, request.FILES)
-        print(request.POST['date'],)
+        print(request.POST['date'], )
         if form.is_valid():
-            send_mail("Добалено новое мероприятие", f"Новое мероприятие от {Puples.objects.get(id=pk).surname} {Puples.objects.get(id=pk).name}\nДата посещения: {request.POST['date']}\nНазвание мероприятия:{request.POST['name']}", "admin@it-class1158.site", ["ibkov@yandex.ru"])
+            send_mail("Добалено новое мероприятие",
+                      f"Новое мероприятие от {Puples.objects.get(id=pk).surname} {Puples.objects.get(id=pk).name}\nДата посещения: {request.POST['date']}\nНазвание мероприятия:{request.POST['name']}",
+                      "admin@it-class1158.site", ["ibkov@yandex.ru"])
             form = form.save(commit=False)
             form.events_id = pk
             form.save()
@@ -197,6 +217,7 @@ class WorksView(ListView):
 class IntensivView(ListView):
     queryset = Works.objects.all()
     template_name = "intensiv.html"
+
 
 class ApplicantView(ListView):
     template_name = "applicant.html"

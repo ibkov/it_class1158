@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Events, Puples
+from .models import Events, Puples, DaysTask
 
 class EventsForm(forms.ModelForm):
     class Meta:
@@ -15,3 +15,8 @@ class ImgChangeForm(forms.ModelForm):
     class Meta:
         model = Puples
         fields = ("image",)
+
+class AnswerTask(forms.ModelForm):
+    class Meta:
+        model = DaysTask
+        fields = ("result",)
