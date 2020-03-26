@@ -8,6 +8,7 @@ from .forms import EventsForm, AddEventForm, ImgChangeForm
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
 from django.urls import reverse_lazy
 from django.core.mail import send_mail
+from django.contrib.auth.mixins import LoginRequiredMixin
 import datetime
 
 
@@ -22,9 +23,10 @@ class MainView(ListView):
         return context
 
 
-class WrongTasksView(ListView):
+class WrongTasksView(LoginRequiredMixin, ListView):
     model = DaysTask
     template_name = "task_day_wrong.html"
+    raise_exception = True
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -32,10 +34,14 @@ class WrongTasksView(ListView):
         return context
 
 
-class TasksView(ListView):
+class TasksView(LoginRequiredMixin, ListView):
     model = DaysTask
     template_name = "task_day.html"
     mass_rate = [5, 3]
+    raise_exception = True
+
+    def get_list_solved_task(self, x):
+        return [(Puples.objects.get(user_id=i).surname, Puples.objects.get(user_id=i).name) for i in x]
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -46,9 +52,8 @@ class TasksView(ListView):
         context['count_of_puples'] = -DaysTask.objects.get().count_answer
         context['list_answ'] = [int(i) for i in DaysTask.objects.get().id_answers.split()]
         context['score'] = len([int(i) for i in DaysTask.objects.get().id_answers.split()])
+        context['list_wins'] = self.get_list_solved_task(context['list_answ'])
         return context
-
-
 
     def post(self, request):
         if request.POST["result"] == DaysTask.objects.get().result and DaysTask.objects.get().count_answer < 0:
@@ -81,10 +86,11 @@ def verificationFileDownload(request):
         return HttpResponseNotFound()
 
 
-class PuplesView(ListView):
+class PuplesView(LoginRequiredMixin, ListView):
     puple = Puples
     template_name = "puples/puples_list.html"
     queryset = Puples.objects.order_by("-rate")
+    raise_exception = True
 
     def get_context_data(self, **kwargs):
         mass = [i[0] for i in Puples.objects.order_by("-rate").values_list('id')]
@@ -105,10 +111,11 @@ def account(request):
     return redirect("/statistic/pupil/" + str(var))
 
 
-class ImgChangeView(DetailView):
+class ImgChangeView(LoginRequiredMixin, DetailView):
     model = Puples
     pk_url_kwarg = "pk"
     template_name = "img_change.html"
+    raise_exception = True
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -132,10 +139,11 @@ class ImgChangeView(DetailView):
         return redirect(reverse_lazy("img_change", kwargs={'pk': pk}))
 
 
-class PostDetailView(DetailView):
+class PostDetailView(LoginRequiredMixin, DetailView):
     model = Puples
     pk_url_kwarg = "pk"
     template_name = "puple_detail/puples_detail_end.html"
+    raise_exception = True
 
     def get(self, request, pk):
         if request.user.is_superuser or request.user.puples.pk == pk:
@@ -152,10 +160,11 @@ class PostDetailView(DetailView):
         return context
 
 
-class AddEventView(DetailView):
+class AddEventView(LoginRequiredMixin, DetailView):
     model = Puples
     pk_url_kwarg = "pk"
     template_name = "add_event/add_event.html"
+    raise_exception = True
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -186,10 +195,11 @@ class AddEventView(DetailView):
         return redirect(reverse_lazy("add_event", kwargs={'pk': pk}))
 
 
-class CheckList(ListView):
+class CheckList(LoginRequiredMixin, ListView):
     model = Events
     queryset = Events.objects.filter(check=False)
     template_name = "CheckList/check_list.html"
+    raise_exception = True
 
     def get(self, request):
         if request.user.is_superuser:
@@ -211,9 +221,10 @@ class CheckList(ListView):
         return context
 
 
-class WorksView(ListView):
+class WorksView(LoginRequiredMixin, ListView):
     queryset = Works.objects.all()
     template_name = "works/works.html"
+    raise_exception = True
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -221,9 +232,10 @@ class WorksView(ListView):
         return context
 
 
-class IntensivView(ListView):
+class IntensivView(LoginRequiredMixin, ListView):
     queryset = Works.objects.all()
     template_name = "intensiv.html"
+    raise_exception = True
 
 
 class ApplicantView(ListView):
