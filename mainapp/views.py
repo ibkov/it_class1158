@@ -1,17 +1,10 @@
 import os
-from typing import List, Any
-
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import PasswordContextMixin
-from django.shortcuts import render, redirect
-from django.utils.decorators import method_decorator
-from django.views.generic import ListView, CreateView
-from django.views.generic.base import View, TemplateView
+from django.shortcuts import redirect
+from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.conf import settings
 from .models import Puples, Events, Works, DaysTask
-from .forms import EventsForm, AddEventForm, ImgChangeForm, AnswerTask
-from django.contrib.auth import login
+from .forms import EventsForm, AddEventForm, ImgChangeForm
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
 from django.urls import reverse_lazy
 from django.core.mail import send_mail
@@ -26,6 +19,16 @@ class MainView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['events_new'] = Events.objects.filter(check=False).count()
+        return context
+
+
+class WrongTasksView(ListView):
+    model = DaysTask
+    template_name = "task_day_wrong.html"
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['score'] = len([int(i) for i in DaysTask.objects.get().id_answers.split()])
         return context
 
 
@@ -59,7 +62,7 @@ class TasksView(ListView):
             task.id_answers += str(Puples.objects.get(user=request.user.id).user.id) + " "
             task.save()
             return redirect("/task_day")
-        return redirect("/task_day")
+        return redirect("/task_day/wrong")
 
 
 def verificationFileDownload(request):
