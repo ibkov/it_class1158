@@ -22,6 +22,10 @@ class MainView(ListView):
         context['events_new'] = Events.objects.filter(check=False).count()
         return context
 
+class HacatonView(ListView):
+    model = Puples
+    template_name = "hacaton.html"
+
 
 class WrongTasksView(LoginRequiredMixin, ListView):
     model = DaysTask
@@ -66,6 +70,9 @@ class TasksView(LoginRequiredMixin, ListView):
             task.count_answer += 1
             task.id_answers += str(Puples.objects.get(user=request.user.id).user.id) + " "
             task.save()
+            send_mail("Задача решена",
+                      f"Задача решена учеником:{Puples.objects.get(user=request.user.id).surname} {Puples.objects.get(user=request.user.id).name}\nДата время и дата решения: {datetime.datetime.now()}",
+                      "admin@it-class1158.site", ["ibkov@yandex.ru"])
             return redirect("/task_day")
         return redirect("/task_day/wrong")
 

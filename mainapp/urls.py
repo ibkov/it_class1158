@@ -17,5 +17,6 @@ urlpatterns = [
     path("intensiv/", views.IntensivView.as_view(), name="intensiv"),
     path("test_applicant/", views.ApplicantView.as_view(), name="applicant"),
     path("task_day/wrong", views.WrongTasksView.as_view(), name="task_day_wrong"),
+    path("hacaton/", views.HacatonView.as_view(), name="hacaton"),
 
 ]
