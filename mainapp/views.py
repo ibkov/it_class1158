@@ -70,9 +70,6 @@ class TasksView(LoginRequiredMixin, ListView):
             task.count_answer += 1
             task.id_answers += str(Puples.objects.get(user=request.user.id).user.id) + " "
             task.save()
-            send_mail("Задача решена",
-                      f"Задача решена учеником:{Puples.objects.get(user=request.user.id).surname} {Puples.objects.get(user=request.user.id).name}\nДата время и дата решения: {datetime.datetime.now()}",
-                      "admin@it-class1158.site", ["ibkov@yandex.ru"])
             return redirect("/task_day")
         return redirect("/task_day/wrong")
 
@@ -192,9 +189,6 @@ class AddEventView(LoginRequiredMixin, DetailView):
         form = EventsForm(request.POST, request.FILES)
         print(request.POST['date'], )
         if form.is_valid():
-            send_mail("Добалено новое мероприятие",
-                      f"Новое мероприятие от {Puples.objects.get(id=pk).surname} {Puples.objects.get(id=pk).name}\nДата посещения: {request.POST['date']}\nНазвание мероприятия:{request.POST['name']}",
-                      "admin@it-class1158.site", ["ibkov@yandex.ru"])
             form = form.save(commit=False)
             form.events_id = pk
             form.save()
