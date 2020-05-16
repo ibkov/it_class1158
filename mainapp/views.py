@@ -7,7 +7,6 @@ from .models import Puples, Events, Works, DaysTask
 from .forms import EventsForm, AddEventForm, ImgChangeForm
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
 from django.urls import reverse_lazy
-from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
 import datetime
 
@@ -26,6 +25,13 @@ class HacatonView(ListView):
     model = Puples
     template_name = "hacaton.html"
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['events_new'] = Events.objects.filter(check=False).count()
+        return context
+
+
+
 
 class WrongTasksView(LoginRequiredMixin, ListView):
     model = DaysTask
@@ -35,6 +41,7 @@ class WrongTasksView(LoginRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['score'] = len([int(i) for i in DaysTask.objects.get().id_answers.split()])
+        context['events_new'] = Events.objects.filter(check=False).count()
         return context
 
 
@@ -57,6 +64,7 @@ class TasksView(LoginRequiredMixin, ListView):
         context['list_answ'] = [int(i) for i in DaysTask.objects.get().id_answers.split()]
         context['score'] = len([int(i) for i in DaysTask.objects.get().id_answers.split()])
         context['list_wins'] = self.get_list_solved_task(context['list_answ'])
+        context['events_new'] = Events.objects.filter(check=False).count()
         return context
 
     def post(self, request):
