@@ -218,6 +218,7 @@ class CheckList(LoginRequiredMixin, ListView):
 
     def post(self, request):
         form = AddEventForm(request.POST)
+        print(request.POST)
         if form.is_valid():
             a = Events.objects.get(pk=request.POST["id"])
             f = AddEventForm(request.POST, instance=a)

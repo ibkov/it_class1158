@@ -1,22 +1,31 @@
 {% block main %}
-{% load static %}
-<div class="container-xl my-4 bg-light">
+    {% load static %}
+    <div class="container-xl my-4 bg-light">
     <div class="row">
         <div class="col col-xl-3 col-lg-3 col-md-3 col-sm-12">
             <h3 class="my-3">
-                {{ puples.name }} {{puples.surname}}
+                {{ puples.name }} {{ puples.surname }}
             </h3>
-            <img src="{{ puples.image.url }}" class="img-fluid">
+            <img src="{{ puples.image.url }}" class="img-fluid rounded">
             <div class="row py-3">
-<!--                <div class="col-12 text-left"><a class="text-dark disabled" href="#">редактировать фотографию</a></div>-->
-                <div class="col-12"><a href="/statistic/pupil/{{ puples.pk }}/img-change/" class="btn btn-block btn-info btn-sm" role="button">Изменить фотографию профиля</a></div>
-                <div class="col pt-1"><a href="/password-change/" class="btn btn-block btn-info btn-sm" role="button">Изменить пароль учетной записи</a></div>
+                <!--                <div class="col-12 text-left"><a class="text-dark disabled" href="#">редактировать фотографию</a></div>-->
+                <div class="col-12"><a href="/statistic/pupil/{{ puples.pk }}/img-change/"
+                                       class="btn btn-block btn-info btn-sm" role="button">Изменить фотографию
+                    профиля</a></div>
+                <div class="col pt-1"><a href="/password-change/" class="btn btn-block btn-info btn-sm" role="button">Изменить
+                    пароль учетной записи</a></div>
             </div>
         </div>
         <div class="col">
-            <h3 class="pt-3">
-                Список посещенных мероприятий
-            </h3>
+            <div class="row">
+                <h3 class="pt-3 col-12 col-lg-8">
+                    {% if puples.status == "ST10" or puples.status == "ST11" %}Список посещенных мероприятий{% else %}Вступительные испытания{% endif %}
+                </h3>
+
+                <p class="font-weight-light text-right mt-2 col">Статус: {{ puples.get_status_display }}</p>
+
+            </div>
+        {% if puples.status == "ST10" or puples.status == "ST11" %}
             <table class="table table-sm text-center my-4">
                 <thead class="thead text-center">
                 <tr>
@@ -28,26 +37,30 @@
                 </tr>
                 </thead>
                 {% for event in allevents %}
-                <tr {% if event.check is False %} class="alert-warning"{% endif %}>
-                    <td class="align-middle">{{ event.date }} {% if event.check is False %}<p class="alert-warning">На модерации</p>{% endif %}</td>
-                    <td class="text-left align-middle">{{ event.name }}</td>
-                    <td class="text-left align-middle text-center d-none d-sm-block">{{ event.organization }}</td>
-                    <td class="text-left align-middle text-center">{{ event.event_rate }}</td>
-                    <td class="text-center align-middle">
-                        <form method="post" action="{% url 'verification_file_download' %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="file_base_dir" value="{{ event.verification_file }}">
-                            <input type="hidden" name="usr_pk" value="{{ puples.user.pk }}">
-                            <button type="submit" class="btn btn-outline-success">Скачать</button>
-                        </form>
-                    </td>
-                </tr>
+                    <tr {% if event.check is False %} class="alert-warning"{% endif %}>
+                        <td class="align-middle">{{ event.date }} {% if event.check is False %}
+                            <p class="alert-warning">На модерации</p>{% endif %}</td>
+                        <td class="text-left align-middle">{{ event.name }}</td>
+                        <td class="text-left align-middle text-center d-none d-sm-block">{{ event.organization }}</td>
+                        <td class="text-left align-middle text-center">{{ event.event_rate }}</td>
+                        <td class="text-center align-middle">
+                            <form method="post" action="{% url 'verification_file_download' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="file_base_dir" value="{{ event.verification_file }}">
+                                <input type="hidden" name="usr_pk" value="{{ puples.user.pk }}">
+                                <button type="submit" class="btn btn-outline-success">Скачать</button>
+                            </form>
+                        </td>
+                    </tr>
 
                 {% endfor %}
             </table>
+
             <a class="btn btn-success btn-lg btn-block" href="add_events" role="button">Добавить новое мероприятие</a>
             <p class="my-3">Количество посещенных мероприятий: {{ events_count }} </p>
             <p class="my-3">Общий рейтинг(автоматический): {{ rate_event }}</p>
+        {% else %}<hr><p class="font-weight-light mt-5">Результат первого этапа: {{ puples.applicant_first_result }} баллов</p>
+        {% endif %}
         </div>
     </div>
-    {% endblock %}
+{% endblock %}
