@@ -1,14 +1,16 @@
+import datetime
 import os
+
+from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
 from django.shortcuts import redirect
+from django.urls import reverse_lazy
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
-from django.conf import settings
-from .models import Puples, Events, Works, DaysTask
+
 from .forms import EventsForm, AddEventForm, ImgChangeForm
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
-from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
-import datetime
+from .models import Puples, Events, Works, DaysTask, ApplicantAction
 
 
 class MainView(ListView):
@@ -21,6 +23,7 @@ class MainView(ListView):
         context['events_new'] = Events.objects.filter(check=False).count()
         return context
 
+
 class HacatonView(ListView):
     model = Puples
     template_name = "hacaton.html"
@@ -29,8 +32,6 @@ class HacatonView(ListView):
         context = super().get_context_data(**kwargs)
         context['events_new'] = Events.objects.filter(check=False).count()
         return context
-
-
 
 
 class WrongTasksView(LoginRequiredMixin, ListView):
@@ -109,12 +110,10 @@ class PuplesView(LoginRequiredMixin, ListView):
     queryset = Puples.objects.order_by("-rate")
     raise_exception = True
 
-
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated or request.user.puples.status == "APP":
             return self.handle_no_permission()
         return super().dispatch(request, *args, **kwargs)
-
 
     def get_context_data(self, **kwargs):
         mass = [i[0] for i in Puples.objects.order_by("-rate").values_list('id')]
@@ -127,6 +126,32 @@ class PuplesView(LoginRequiredMixin, ListView):
         context['superusr'] = self.request.user.is_superuser
         context['pupil_pk'] = self.request.user.puples.pk
         context['events_new'] = Events.objects.filter(check=False).count()
+        return context
+
+
+class ApplicantListView(LoginRequiredMixin, ListView):
+    puple = Puples
+    template_name = "applicant_list.html"
+    queryset = Puples.objects.filter(status="APP")
+    raise_exception = True
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated or request.user.puples.status == "APP":
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        mass = [i[0] for i in Puples.objects.order_by("-rate").values_list('id')]
+        for i in mass:
+            pup = Puples.objects.get(id=i)
+            pup.rate = sum(map(lambda x: x.event_rate, Events.objects.filter(events__pk=i, check=True)))
+            pup.save()
+
+        context = super().get_context_data(**kwargs)
+        context['superusr'] = self.request.user.is_superuser
+        context['pupil_pk'] = self.request.user.puples.pk
+        context['events_new'] = Events.objects.filter(check=False).count()
+        context['app'] = ApplicantAction.objects.get(action_app__status="APP")
         return context
 
 
@@ -146,6 +171,10 @@ class ImgChangeView(LoginRequiredMixin, DetailView):
         context['events_count'] = Events.objects.filter(events__pk=self.kwargs['pk'], check=True).count()
         context['events_new'] = Events.objects.filter(check=False).count()
         context['allevents'] = Events.objects.filter(events__pk=self.kwargs['pk']).order_by('-date')
+        if Puples.objects.get(pk=self.kwargs["pk"]).status == "APP":
+            context['app'] = ApplicantAction.objects.get(action_app=self.kwargs['pk'])
+        else:
+            context['app'] = 1
         return context
 
     def get(self, request, pk):
@@ -169,6 +198,12 @@ class PostDetailView(LoginRequiredMixin, DetailView):
     template_name = "puple_detail/puples_detail_end.html"
     raise_exception = True
 
+    def post(self, request, pk):
+        a = ApplicantAction.objects.get(action_app=pk)
+        a.check = True
+        a.save()
+        return redirect("/statistic/pupil/" + str(pk))
+
     def get(self, request, pk):
         if request.user.is_superuser or request.user.puples.pk == pk:
             return super().get(request, pk)
@@ -179,6 +214,10 @@ class PostDetailView(LoginRequiredMixin, DetailView):
         context['events_count'] = Events.objects.filter(events__pk=self.kwargs['pk'], check=True).count()
         context['events_new'] = Events.objects.filter(check=False).count()
         context['allevents'] = Events.objects.filter(events__pk=self.kwargs['pk']).order_by('-date')
+        if Puples.objects.get(pk=self.kwargs["pk"]).status == "APP":
+            context['app'] = ApplicantAction.objects.get(action_app=self.kwargs['pk'])
+        else:
+            context['app'] = 1
         context['rate_event'] = sum(
             map(lambda x: x.event_rate, Events.objects.filter(events__pk=self.kwargs['pk'], check=True)))
         return context

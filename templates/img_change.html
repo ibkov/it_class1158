@@ -115,6 +115,10 @@
                         </div>
                     </div>
                     <h3 class="font-weight-light">Собеседование</h3>
+                    {% if app.check is False %}
+                        <p class="font-weight-light text-uppercase text-danger">Участие не подтверждено</p>
+                    {% else %}<p class="font-weight-light text-uppercase text-success">Участие подтверждено</p>
+                    {% endif %}
                     <hr>
                     <p class="font-weight-light">Время собеседования 15 минут</p>
                     <p class="font-weight-light">До собеседования вспомни все олимпиады, конкурсы и конференции в
@@ -127,7 +131,42 @@
                         показать
                         свои оценки по
                         математике и информатике за первое полугодие и год из электронного дневника.</p>
-                    <p class="font-weight-light">Информация о твоем собеседовании указана в письме</p>
+                    <h5 class="font-weight-light">Информация о твоем собеседовании:</h5>
+                    <table class="table font-weight-light">
+                        <tbody>
+                        <tr>
+                            <th scope="row">Время:</th>
+                            <td>{{ app.date }}</td
+                        </tr>
+                        <tr>
+                            <th scope="row">Дата:</th>
+                            <td>{{ app.time }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Ссылка на собеседование:</th>
+                            <td>{{ app.url }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Идентификатор конференции:</th>
+                            <td>{{ app.login }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Пароль конференции:</th>
+                            <td>{{ app.password }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <p class="font-weight-light">Если ты со всем ознакомился, нажми "подтвердить участие в
+                        собеседовании",
+                        чтобы мы знали о серьезности твоих намерений поступить в ИТ-класс</p>
+                    <p class="font-weight-light">Если ты передумал поступить в ИТ-класс напиши нам об этом на почту
+                        admin@it-class.site</p>
+                    {% if app.check is False %}
+                        <form method="post">{% csrf_token %}
+                            <input type="hidden" name="check" value="True"/>
+                            <button class="btn btn-success mb-3">Подтвердить участие в собеседовании</button>
+                        </form>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

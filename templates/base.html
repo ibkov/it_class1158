@@ -63,7 +63,7 @@
                         <a class="nav-link{% block detail_active %}{% endblock %}" href="/rate">РЕЙТИНГ УЧАСТНИКОВ</a>
                     </li>
                 {% endif %}
-                {% if user.is_authenticated and user.puples.status != "APP"%}
+                {% if user.is_authenticated and user.puples.status != "APP" %}
                     <li class="nav-item">
                         <a class="nav-link{% block detail_active_works %}{% endblock %}" href="/works">МОИ РАБОТЫ</a>
                     </li>
@@ -86,11 +86,11 @@
                         <a class="nav-link{% block detail_active_task %}{% endblock %}" href="/task_day/">ЗАДАЧА ДНЯ</a>
                     </li>
                 {% endif %}
-
-
-                <li class="nav-item">
-                    <a class="nav-link" href="http://profil.mos.ru/it/?page_id=1139">ПРИЕМНАЯ КАМПАНИЯ 2020</a>
-                </li>
+                {% if user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/applicant_list">СПИСОК КАНДИДАТОВ</a>
+                    </li>
+                {% endif %}
                 {% if user.is_superuser %}
                     {% if events_new != 0 %}
                         <li class="nav-item">

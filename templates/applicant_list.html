@@ -1,0 +1,49 @@
+{% extends  'base.html' %}
+{% load static %}
+{% block main %}
+    {% if user.username != "" %}
+        <table class="table table-sm text-center">
+            <thead class="thead-dark">
+            <tr>
+                <th></th>
+                <th class="text-left py-3">Фамилия</th>
+                <th class="text-left py-3">Имя</th>
+                <th class="py-3">Баллы</th>
+                {% if user.is_superuser %}
+                    <th class="text-center py-3">Подтверждение</th>
+                    <th class="text-center py-3">Дата</th>
+                    <th class="text-center py-3">Время</th>
+                    <th></th>
+                {% endif %}
+            </tr>
+            </thead>
+            {% for puple in puples_list %}
+                {% if puple.name != "-" %}
+                    <tr{% if puple.surname == user.last_name %} class="table-warning" {% endif %}>
+                        <td><img src="{{ puple.image.url }}" alt="..." class="rounded-circle" ,
+                                 style="width: 75px; object-fit: cover; height:75px;"></td>
+                        <td class="text-left align-middle">{{ puple.surname }}</td>
+                        <td class="text-left align-middle">{{ puple.name }}</td>
+                        <td class="align-middle">{{ puple.applicant_first_result }}</td>
+                        <td class="align-middle">{% if app.check is True %}<img class="img-fluid" style="width: 25px;"
+                                                                                src="{% static '/images/interface-2.png' %}">{% else %}
+                            <img class="img-fluid" style="width: 25px;"
+                                 src="{% static '/images/signs.png' %}">{% endif %}</td>
+                        <td class="align-middle">{{ app.date }}</td>
+                        <td class="align-middle">{{ app.time }}</td>
+                        {% if user.is_superuser %}
+                            <td class="align-middle">
+                                {% if superusr or pupil_pk == puple.pk %}
+                                    <a href="/statistic/pupil/{{ puple.id }}">
+                                        <button type="button" class="btn btn-dark">Подробнее</button>
+                                    </a>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}
+{% block detail_active %} active{% endblock %}

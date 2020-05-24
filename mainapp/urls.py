@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.urls import path
 from . import views
-from .views import PostDetailView, AddEventView, WorksView
+from .views import PostDetailView, AddEventView, WorksView, ApplicantListView
 
 urlpatterns = [
     path("", views.MainView.as_view()),
@@ -18,4 +18,5 @@ urlpatterns = [
     path("test_applicant/", views.ApplicantView.as_view(), name="applicant"),
     path("task_day/wrong", views.WrongTasksView.as_view(), name="task_day_wrong"),
     path("hacaton/", views.HacatonView.as_view()),
+    path("applicant_list/", ApplicantListView.as_view()),
 ]

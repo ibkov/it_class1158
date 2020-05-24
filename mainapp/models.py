@@ -34,6 +34,18 @@ class Puples(models.Model):
         verbose_name = "Ученики"
         verbose_name_plural = "Ученики"
 
+class ApplicantAction(models.Model):
+    date = models.DateField("Дата собеседования", default='')
+    time = models.TimeField("Время собеседования", default='')
+    url = models.URLField("Ссылка собесодования", default='')
+    login = models.CharField("Идентификатор собеседования",max_length=30, default='')
+    password = models.CharField("Пароль собеседования", max_length=50, default='')
+    check = models.BooleanField(verbose_name="Подтверждение ученика", default=False)
+    action_app = models.ForeignKey(Puples, on_delete=models.SET_NULL, null=True, verbose_name="Кандидат")
+
+    class Meta:
+        verbose_name = "Для кандидатов"
+        verbose_name_plural = "Для кандидатов"
 
 class Events(models.Model):
     date = models.DateField("Дата посещения")
