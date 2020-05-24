@@ -58,12 +58,12 @@
                 <li class="nav-item">
                     <a class="nav-link{% block main_active %}{% endblock %}" href="/">ГЛАВНАЯ<span class="sr-only">(current)</span></a>
                 </li>
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and user.puples.status != "APP" %}
                     <li class="nav-item">
                         <a class="nav-link{% block detail_active %}{% endblock %}" href="/rate">РЕЙТИНГ УЧАСТНИКОВ</a>
                     </li>
                 {% endif %}
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and user.puples.status != "APP"%}
                     <li class="nav-item">
                         <a class="nav-link{% block detail_active_works %}{% endblock %}" href="/works">МОИ РАБОТЫ</a>
                     </li>
@@ -81,7 +81,7 @@
                         <a class="dropdown-item" href="/hacaton">ХАКАТОН 1-11 МАЯ 2020г.</a>
                     </div>
                 </li>
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and user.puples.status != "APP" %}
                     <li class="nav-item">
                         <a class="nav-link{% block detail_active_task %}{% endblock %}" href="/task_day/">ЗАДАЧА ДНЯ</a>
                     </li>

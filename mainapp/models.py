@@ -9,6 +9,14 @@ class Puples(models.Model):
         ('ST11', 'Ученик 11 ИТ-класса'),
         ('APP', 'Кандидат в ИТ-класс'),
     )
+
+    PROGRESS_CHOICES = (
+        (0, '0'),
+        (25, '25'),
+        (50, '50'),
+        (75, '75'),
+        (100, '100'),
+    )
     name = models.CharField("Имя", null=True, max_length=50)
     surname = models.CharField("Фамилия", null=True, max_length=100)
     rate = models.PositiveIntegerField("Рейтинг ученика", default=0)
@@ -16,7 +24,8 @@ class Puples(models.Model):
                               default="puples_photo/user-2.png")
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, default='', verbose_name="Связь с таблицей пользователей")
     status = models.CharField("Статуc", choices=STATUS_CHOICES, default='ST10', max_length=30)
-    applicant_first_result = models.FloatField(blank=True, default=0)
+    applicant_first_result = models.FloatField("Результат первого этапа",blank=True, default=0)
+    applicant_progress = models.IntegerField(verbose_name="Прогресс", choices=PROGRESS_CHOICES, default=0, blank=True)
 
     def __str__(self):
         return self.name

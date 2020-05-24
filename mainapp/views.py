@@ -51,6 +51,11 @@ class TasksView(LoginRequiredMixin, ListView):
     mass_rate = [5, 3]
     raise_exception = True
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated or request.user.puples.status == "APP":
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+
     def get_list_solved_task(self, x):
         return [(Puples.objects.get(user_id=i).surname, Puples.objects.get(user_id=i).name) for i in x]
 
@@ -103,6 +108,13 @@ class PuplesView(LoginRequiredMixin, ListView):
     template_name = "puples/puples_list.html"
     queryset = Puples.objects.order_by("-rate")
     raise_exception = True
+
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated or request.user.puples.status == "APP":
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+
 
     def get_context_data(self, **kwargs):
         mass = [i[0] for i in Puples.objects.order_by("-rate").values_list('id')]
@@ -235,6 +247,11 @@ class WorksView(LoginRequiredMixin, ListView):
     queryset = Works.objects.all()
     template_name = "works/works.html"
     raise_exception = True
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated or request.user.puples.status == "APP":
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)

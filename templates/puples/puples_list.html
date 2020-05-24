@@ -15,7 +15,7 @@
     </tr>
     </thead>
     {% for puple in puples_list %}
-    {% if puple.name != "-" %}
+    {% if puple.name != "-" and puple.status != "APP" %}
     <tr{% if puple.surname == user.last_name %} class="table-warning" {% endif %}>
         <td><img src="{{ puple.image.url }}" alt="..." class="rounded-circle",
                  style="width: 75px; object-fit: cover; height:75px;"></td>
