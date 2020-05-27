@@ -18,31 +18,36 @@
             </tr>
             </thead>
             {% for puple in puples_list %}
-                {% if puple.name != "-" %}
-                    <tr{% if puple.surname == user.last_name %} class="table-warning" {% endif %}>
-                        <td><img src="{{ puple.image.url }}" alt="..." class="rounded-circle" ,
-                                 style="width: 75px; object-fit: cover; height:75px;"></td>
-                        <td class="text-left align-middle">{{ puple.surname }}</td>
-                        <td class="text-left align-middle">{{ puple.name }}</td>
-                        <td class="align-middle">{{ puple.applicant_first_result }}</td>
-                        <td class="align-middle">{% if app.check is True %}<img class="img-fluid" style="width: 25px;"
-                                                                                src="{% static '/images/interface-2.png' %}">{% else %}
-                            <img class="img-fluid" style="width: 25px;"
-                                 src="{% static '/images/signs.png' %}">{% endif %}</td>
-                        <td class="align-middle">{{ app.date }}</td>
-                        <td class="align-middle">{{ app.time }}</td>
-                        {% if user.is_superuser %}
-                            <td class="align-middle">
-                                {% if superusr or pupil_pk == puple.pk %}
-                                    <a href="/statistic/pupil/{{ puple.id }}">
-                                        <button type="button" class="btn btn-dark">Подробнее</button>
-                                    </a>
-                                {% endif %}
-                            </td>
-                        {% endif %}
-                    </tr>
-                {% endif %}
+                {% for app in puple.applicantaction_set.all %}
+                    {% if puple.name != "-" %}
+                        <tr{% if puple.surname == user.last_name %} class="table-warning" {% endif %}>
+                            <td><img src="{{ puple.image.url }}" alt="..." class="rounded-circle" ,
+                                     style="width: 75px; object-fit: cover; height:75px;"></td>
+                            <td class="text-left align-middle">{{ puple.surname }}</td>
+                            <td class="text-left align-middle">{{ puple.name }}</td>
+                            <td class="align-middle">{{ puple.applicant_first_result }}</td>
+
+                            <td class="align-middle">{% if app.check is True %}
+                                <img class="img-fluid" style="width: 25px;"
+                                     src="{% static '/images/interface-2.png' %}">{% else %}
+                                <img class="img-fluid" style="width: 25px;"
+                                     src="{% static '/images/signs.png' %}">{% endif %}</td>
+                            <td class="align-middle">{{ app.date }}</td>
+                            <td class="align-middle">{{ app.time }}</td>
+                            {% if user.is_superuser %}
+                                <td class="align-middle">
+                                    {% if superusr or pupil_pk == puple.pk %}
+                                        <a href="/statistic/pupil/{{ puple.id }}">
+                                            <button type="button" class="btn btn-dark">Подробнее</button>
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
             {% endfor %}
+
         </table>
     {% endif %}
 {% endblock %}

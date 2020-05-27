@@ -132,7 +132,7 @@ class PuplesView(LoginRequiredMixin, ListView):
 class ApplicantListView(LoginRequiredMixin, ListView):
     puple = Puples
     template_name = "applicant_list.html"
-    queryset = Puples.objects.filter(status="APP")
+    queryset = Puples.objects.filter(status="APP").order_by('-applicant_first_result')
     raise_exception = True
 
     def dispatch(self, request, *args, **kwargs):
@@ -151,7 +151,6 @@ class ApplicantListView(LoginRequiredMixin, ListView):
         context['superusr'] = self.request.user.is_superuser
         context['pupil_pk'] = self.request.user.puples.pk
         context['events_new'] = Events.objects.filter(check=False).count()
-        context['app'] = ApplicantAction.objects.get(action_app__status="APP")
         return context
 
 

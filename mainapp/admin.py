@@ -16,6 +16,8 @@ class WorksAdmin(admin.ModelAdmin):
 
 class ApplicantActionAdmin(admin.ModelAdmin):
     list_display = ("action_app", "check","date")
+    search_fields = ("action_app__name", "action_app__surname")
+    list_filter = ("action_app__surname", "date")
 
 admin.site.register(Puples)
 admin.site.register(Events, EventsAdmin)
