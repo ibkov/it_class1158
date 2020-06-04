@@ -1,40 +1,30 @@
 {% extends  'base.html' %}
 {% load static %}
 {% block main %}
-{% if user.username != "" %}
-<table class="table table-sm text-center">
-    <thead class="thead-dark">
-    <tr>
-        <th></th>
-        <th class="text-left py-3">Фамилия</th>
-        <th class="text-left py-3">Имя</th>
-        <th class="py-3">Баллы</th>
-        {% if user.is_superuser %}
-        <th></th>
-        {% endif %}
-    </tr>
-    </thead>
-    {% for puple in puples_list %}
-    {% if puple.name != "-" and puple.status != "APP" %}
-    <tr{% if puple.surname == user.last_name %} class="table-warning" {% endif %}>
-        <td><img src="{{ puple.image.url }}" alt="..." class="rounded-circle",
-                 style="width: 75px; object-fit: cover; height:75px;"></td>
-        <td class="text-left align-middle">{{ puple.surname }}</td>
-        <td class="text-left align-middle">{{ puple.name }}</td>
-        <td class="align-middle">{{ puple.rate }}</td>
-        {% if user.is_superuser %}
-        <td class="align-middle">
-            {% if superusr or pupil_pk == puple.pk %}
-                <a href="/statistic/pupil/{{ puple.id }}">
-                    <button type="button" class="btn btn-dark">Подробнее</button>
-                </a>
-            {% endif %}
-        </td>
-        {% endif %}
-    </tr>
+    {% if user.username != "" %}
+        <table class="table table-sm text-center {% if user.is_superuser %}table-hover{% endif %}">
+            <thead class="thead-dark">
+            <tr>
+                <th></th>
+                <th class="text-left py-3">Фамилия</th>
+                <th class="text-left py-3">Имя</th>
+                <th class="py-3">Баллы</th>
+            </tr>
+            </thead>
+            {% for puple in puples_list %}
+                {% if puple.name != "-" and puple.status != "APP" %}
+                    <tr{% if superusr or pupil_pk == puple.pk %}
+                        onclick="window.location.href='/statistic/pupil/{{ puple.id }}'; return false" {% endif %}
+                    {% if puple.surname == user.last_name %} class="table-warning" {% endif %}>
+                        <td><img src="{{ puple.image.url }}" alt="..." class="rounded-circle" ,
+                                 style="width: 75px; object-fit: cover; height:75px;"></td>
+                        <td class="text-left align-middle">{{ puple.surname }}</td>
+                        <td class="text-left align-middle">{{ puple.name }}</td>
+                        <td class="align-middle">{{ puple.rate }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
     {% endif %}
-    {% endfor%}
-</table>
-{% endif %}
 {% endblock %}
 {% block detail_active %} active{% endblock %}

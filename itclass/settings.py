@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'tinymce',
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -77,7 +78,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'itclass.wsgi.application'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-LOGIN_REDIRECT_URL =  '/'
+LOGIN_REDIRECT_URL =  'success/'
 LOGOUT_REDIRECT_URL = '/'
 
 # Database

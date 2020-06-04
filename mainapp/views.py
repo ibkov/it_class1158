@@ -151,6 +151,8 @@ class ApplicantListView(LoginRequiredMixin, ListView):
         context['superusr'] = self.request.user.is_superuser
         context['pupil_pk'] = self.request.user.puples.pk
         context['events_new'] = Events.objects.filter(check=False).count()
+        context['app_without_interview'] = Puples.objects.filter(status="APP").count() - Puples.objects.filter(
+            status="APP", applicant_progress="75").count()
         return context
 
 
