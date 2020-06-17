@@ -8,6 +8,8 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
+from docxtpl import DocxTemplate
+import datetime as dt
 
 from .forms import EventsForm, AddEventForm, ImgChangeForm
 from .models import Puples, Events, Works, DaysTask, ApplicantAction
@@ -21,6 +23,7 @@ class MainView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['events_new'] = Events.objects.filter(check=False).count()
+        context['applicants_count'] = Puples.objects.filter(status="APP").count()
         return context
 
 
@@ -31,6 +34,7 @@ class HacatonView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['events_new'] = Events.objects.filter(check=False).count()
+        context['applicants_count'] = Puples.objects.filter(status="APP").count()
         return context
 
 
@@ -43,6 +47,7 @@ class WrongTasksView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['score'] = len([int(i) for i in DaysTask.objects.get().id_answers.split()])
         context['events_new'] = Events.objects.filter(check=False).count()
+        context['applicants_count'] = Puples.objects.filter(status="APP").count()
         return context
 
 
@@ -71,6 +76,7 @@ class TasksView(LoginRequiredMixin, ListView):
         context['score'] = len([int(i) for i in DaysTask.objects.get().id_answers.split()])
         context['list_wins'] = self.get_list_solved_task(context['list_answ'])
         context['events_new'] = Events.objects.filter(check=False).count()
+        context['applicants_count'] = Puples.objects.filter(status="APP").count()
         return context
 
     def post(self, request):
@@ -126,6 +132,7 @@ class PuplesView(LoginRequiredMixin, ListView):
         context['superusr'] = self.request.user.is_superuser
         context['pupil_pk'] = self.request.user.puples.pk
         context['events_new'] = Events.objects.filter(check=False).count()
+        context['applicants_count'] = Puples.objects.filter(status="APP").count()
         return context
 
 
@@ -151,6 +158,7 @@ class ApplicantListView(LoginRequiredMixin, ListView):
         context['superusr'] = self.request.user.is_superuser
         context['pupil_pk'] = self.request.user.puples.pk
         context['events_new'] = Events.objects.filter(check=False).count()
+        context['applicants_count'] = Puples.objects.filter(status="APP").count()
         context['app_without_interview'] = Puples.objects.filter(status="APP").count() - Puples.objects.filter(
             status="APP", applicant_progress="75").count()
         return context
@@ -171,6 +179,7 @@ class ImgChangeView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context['events_count'] = Events.objects.filter(events__pk=self.kwargs['pk'], check=True).count()
         context['events_new'] = Events.objects.filter(check=False).count()
+        context['applicants_count'] = Puples.objects.filter(status="APP").count()
         context['allevents'] = Events.objects.filter(events__pk=self.kwargs['pk']).order_by('-date')
         if Puples.objects.get(pk=self.kwargs["pk"]).status == "APP":
             context['app'] = ApplicantAction.objects.get(action_app=self.kwargs['pk'])
@@ -214,6 +223,7 @@ class PostDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context['events_count'] = Events.objects.filter(events__pk=self.kwargs['pk'], check=True).count()
         context['events_new'] = Events.objects.filter(check=False).count()
+        context['applicants_count'] = Puples.objects.filter(status="APP").count()
         context['allevents'] = Events.objects.filter(events__pk=self.kwargs['pk']).order_by('-date')
         if Puples.objects.get(pk=self.kwargs["pk"]).status == "APP":
             context['app'] = ApplicantAction.objects.get(action_app=self.kwargs['pk'])
@@ -236,6 +246,7 @@ class AddEventView(LoginRequiredMixin, DetailView):
         context['allevents'] = Events.objects.filter(events__pk=self.kwargs['pk']).order_by('-date')
         context['form'] = EventsForm()
         context['events_new'] = Events.objects.filter(check=False).count()
+        context['applicants_count'] = Puples.objects.filter(status="APP").count()
         context['rate_event'] = sum(
             map(lambda x: x.event_rate, Events.objects.filter(events__pk=self.kwargs['pk'], check=True)))
         return context
@@ -270,16 +281,19 @@ class CheckList(LoginRequiredMixin, ListView):
 
     def post(self, request):
         form = AddEventForm(request.POST)
-        print(request.POST)
-        if form.is_valid():
+        if form.is_valid() and request.POST["check"] == "True":
             a = Events.objects.get(pk=request.POST["id"])
             f = AddEventForm(request.POST, instance=a)
             f.save()
+        elif request.POST["check"] == "False":
+            b = Events.objects.get(pk=request.POST["id"])
+            b.delete()
         return redirect("/check_list/")
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['events_new'] = Events.objects.filter(check=False).count()
+        context['applicants_count'] = Puples.objects.filter(status="APP").count()
         return context
 
 
@@ -296,6 +310,7 @@ class WorksView(LoginRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['events_new'] = Events.objects.filter(check=False).count()
+        context['applicants_count'] = Puples.objects.filter(status="APP").count()
         return context
 
 
@@ -308,3 +323,26 @@ class IntensivView(LoginRequiredMixin, ListView):
 class ApplicantView(ListView):
     template_name = "applicant.html"
     queryset = Events.objects.all()
+
+class PhotoGalleryView(ListView):
+    template_name = "photo_gallery.html"
+    queryset = Events.objects.all()
+
+    def post(self, request):
+        print(request.POST)
+        doc = DocxTemplate(settings.MEDIA_ROOT + "/files/templ.docx")
+        data = request.POST
+        context = {
+            'name': f'{data["name"]}',
+            'address': f'{data["address"]}',
+            'number':f'{data["number"]}',
+            'name_child': f'{data["name_child"]}',
+            'date_br': f'{data["date_br"]}',
+            'address_child': f'{data["address_child"]}',
+            'profile': f'{data["profile"]}',
+            'date_now': f'{dt.date.today().day}/0{dt.date.today().month}/{dt.date.today().year}'
+        }
+
+        doc.render(context)
+        doc.save(settings.MEDIA_ROOT + f"/files/{data['class']}-{context['name_child']}.docx")
+        return redirect("/")

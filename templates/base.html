@@ -99,18 +99,21 @@
                     </li>
                 {% endif %}
                 {% if user.is_superuser %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/applicant_list">СПИСОК КАНДИДАТОВ</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#"
+                           id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            ПАНЕЛЬ АДМИНИСТРАТОРА
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            {% if applicants_count != 0 %}<a class="dropdown-item" href="/applicant_list">СПИСОК КАНДИДАТОВ</a>{% endif %}
+                            {% if events_new != 0 %}
+                                <a class="dropdown-item notification bg-info text-white mr-3{% block detail_active_checklist %}{% endblock %}"
+                                   href="/check_list"><span>СПИСОК
+                            НА МОДЕРАЦИЮ</span>
+                                <span class="badge mr-3 mr-lg-0">{{ events_new }}</span>{% endif %}</a>
+                        </div>
                     </li>
-                {% endif %}
-                {% if user.is_superuser %}
-                    {% if events_new != 0 %}
-                        <li class="nav-item">
-                        <a class="nav-link notification{% block detail_active_checklist %}{% endblock %}"
-                           href="/check_list"><span>СПИСОК
-                            НА МОДЕРАЦИЮ </span>
-                        <span class="badge mr-3 mr-lg-0">{{ events_new }}</span>{% endif %}</a>
-                </li>
                 {% endif %}
             </ul>
             <form class="form-inline my-2 my-lg-0">

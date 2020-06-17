@@ -38,21 +38,19 @@
                             <form method="post">{% csrf_token %}
                                 <td class="text-center align-middle row align-content-center align-items-center">
                                     <input type="text"
-                                           class="form-control col-xl-3 col-lg-10 mx-auto d-block text-center"
+                                           class="form-control block_center col-xl-3 col-lg-10 mx-auto d-block text-center"
+                                           style="margin: 22px auto;"
                                            name="event_rate" value="1">
                                 </td>
                                 <td class="align-middle text-center">
                                     <input type="hidden" name="id" value="{{ event.id }}"/>
                                     <input type="hidden" name="check" value="True"/>
-                                    <button class="btn btn-success" onclick="submit">Подтвердить</button>
-                                    <button class="btn btn-warning mt-2" onclick="cancel">Отклонить</button>
-                                    <script>function cancel() {
-                                        $.post("123");
-                                    }
-
-                                    function submit() {
-                                        $.post("123");
-                                    }</script>
+                                    <button class="btn btn-success btn-block" onclick="submit">Подтвердить</button>
+                            </form>
+                            <form method="post">{% csrf_token %}
+                                <input type="hidden" name="id" value="{{ event.id }}"/>
+                                <input type="hidden" name="check" value="False"/>
+                                <button class="btn btn-sm btn-warning btn-block mt-2" onclick="submit">Отклонить</button>
                             </form>
                         </tr>
                     {% endfor %}
