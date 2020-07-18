@@ -6,11 +6,15 @@
                 <h3 class="my-3">
                     {{ puples.name }} {{ puples.surname }}
                 </h3>
+
                 <img src="{{ puples.image.url }}" class="img-fluid rounded">
-                <div class="row py-3">
+            {% if puples.image.url == "/media/puples_photo/user-2.png" %}
+                <p class="font-weight-light text-danger bg-light mt-3">Добавьте фотографию профиля</p>{% endif %}
+                <div class="row py-2">
                     <!--                <div class="col-12 text-left"><a class="text-dark disabled" href="#">редактировать фотографию</a></div>-->
                     <div class="col-12"><a href="/statistic/pupil/{{ puples.pk }}/img-change/"
-                                           class="btn btn-block btn-info btn-sm" role="button">Изменить фотографию
+                                           class="btn btn-block btn-info btn-sm" role="button">
+                        {% if puples.image.url != "/media/puples_photo/user-2.png" %}Изменить{% else %}Добавить{% endif %} фотографию
                         профиля</a></div>
                     <div class="col pt-1"><a href="/password-change/" class="btn btn-block btn-info btn-sm"
                                              role="button">Изменить
@@ -212,9 +216,6 @@
                         <p class="font-weight-light">Если у тебя остались какие-то вопросы пиши нам на почту
                             <a href="mailto:admin@it-class1158.site?subject=Вопрос от {{ puples.surname }} {{ puples.name }}">admin@it-class1158.site</a>
                         </p>
-
-
-
                     {% endif %}
                 {% endif %}
             </div>
