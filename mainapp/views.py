@@ -1,4 +1,5 @@
 import datetime
+import datetime as dt
 import os
 
 from django.conf import settings
@@ -9,10 +10,9 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from docxtpl import DocxTemplate
-import datetime as dt
 
 from .forms import EventsForm, AddEventForm, ImgChangeForm
-from .models import Puples, Events, Works, DaysTask, ApplicantAction
+from .models import Puples, Events, Works, DaysTask, ApplicantAction, SummerPractice
 
 
 class MainView(ListView):
@@ -324,6 +324,7 @@ class ApplicantView(ListView):
     template_name = "applicant.html"
     queryset = Events.objects.all()
 
+
 class PhotoGalleryView(ListView):
     template_name = "photo_gallery.html"
     queryset = Events.objects.all()
@@ -335,7 +336,7 @@ class PhotoGalleryView(ListView):
         context = {
             'name': f'{data["name"]}',
             'address': f'{data["address"]}',
-            'number':f'{data["number"]}',
+            'number': f'{data["number"]}',
             'name_child': f'{data["name_child"]}',
             'date_br': f'{data["date_br"]}',
             'address_child': f'{data["address_child"]}',
@@ -345,4 +346,43 @@ class PhotoGalleryView(ListView):
 
         doc.render(context)
         doc.save(settings.MEDIA_ROOT + f"/files/{data['class']}-{context['name_child']}.docx")
-        return redirect("/")
+        return HttpResponse("<h1 style='text-align: center; font-family: Helvetica, serif;'>Заявление отправлено</h1>")
+
+
+class SummerPracticeView(LoginRequiredMixin, ListView):
+    template_name = "summer_practice.html"
+    queryset = SummerPractice.objects.all()
+    login_url = '/login/'
+    redirect_field_name = 'summer_practice'
+
+    def post(self, request):
+        req = request.POST
+        check = bool(req["choise"])
+        id_puple = str(req["id"] + ' ')
+        list_id = SummerPractice.objects.get(id=request.POST['id_course'])
+        if req["id"] not in list_id.id_registers and check:
+            list_id.id_registers += id_puple
+            list_id.save()
+        elif req["id"] in list_id.id_registers and check:
+            list_id.id_registers = list_id.id_registers.replace(id_puple, "")
+            list_id.save()
+        return redirect("/summer_practice/")
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["user_id"] = str(self.request.user.id)
+        context['events_new'] = Events.objects.filter(check=False).count()
+        context['applicants_count'] = Puples.objects.filter(status="APP").count()
+        context["all"] = " ".join([SummerPractice.objects.all()[i].id_registers for i in range(3)])
+        context["all2"] = " ".join([SummerPractice.objects.all()[i].id_registers for i in range(3, 6)])
+        return context
+
+class SummerPracticeAdminView(LoginRequiredMixin, ListView):
+    template_name = "summer_practice_admin.html"
+    queryset = SummerPractice.objects.all()
+    login_url = '/login/'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(SummerPractice.objects.all()[0].id_registers)
+        return context

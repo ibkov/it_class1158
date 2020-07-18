@@ -1,0 +1,11 @@
+{% extends  'base.html' %}
+{% load static %}
+{% block main %}
+    <div class="container">
+    {% for course in summerpractice_list %}
+        <p> {{ course.name }} </p>
+    {% endfor %}
+    </div>
+
+{% endblock %}
+{% block detail_active_checklist %} active{% endblock %}

@@ -21,4 +21,6 @@ urlpatterns = [
     path("hacaton/", views.HacatonView.as_view()),
     path("applicant_list/", ApplicantListView.as_view(), name="applicant_list"),
     path("login/success/", views.account, name="applicant_list"),
+    path("summer_practice/", views.SummerPracticeView.as_view(), name="summer_practice"),
+    path("summer_practice/admin", views.SummerPracticeAdminView.as_view(), name="summer_practice_admin"),
 ]

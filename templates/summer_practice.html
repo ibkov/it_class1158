@@ -1,0 +1,76 @@
+{% extends  'base.html' %}
+{% load static %}
+{% block main %}
+    {% if user.is_superuser %}
+        <div class="container">
+            <h2 class="text-left font-weight-light pt-3">Летняя практика для ИТ-классов</h2>
+            <hr>
+            <h5 class="font-weight-light">Если ты учишся или поступил в ит-класс, то тебе необходимо пройти летнюю
+                практику
+                в количестве 10 часов</h5>
+            <br>
+            <div class="card-deck">
+                {% for course in summerpractice_list|slice:":3" %}
+                    <div class="card {% if user_id in course.id_registers %}bg-success text-white{% endif %}">
+                        <img class="card-img-top" src="{{ course.image.url }}" alt="Card image cap">
+                        <div class="card-body font-weight-light">
+                            <h5 class="card-title">{{ course.name }}</h5>
+                            <p class="card-text">{{ course.description }}</p>
+                        </div>
+                        <div class="card-footer font-weight-light">
+                            <p class="card-text">Дата начало курса: {{ course.date }}</p>
+                            <p class="card-text">Время начала курса: {{ course.time }}</p>
+                            {% if user_id not in course.id_registers and user_id not in all %}
+                                <form method="post">{% csrf_token %}
+                                    <input type="hidden" name="id" value="{{ user.id }}"/>
+                                    <input type="hidden" name="id_course" value="{{ course.id }}"/>
+                                    <input type="hidden" name="choise" value="True"/>
+                                    <button class="btn btn-success btn-block font-weight-light">ЗАПИСАТЬСЯ</button>
+                                </form>
+                            {% elif user_id in course.id_registers %}
+                                <form method="post">{% csrf_token %}
+                                    <input type="hidden" name="id" value="{{ user.id }}"/>
+                                    <input type="hidden" name="id_course" value="{{ course.id }}"/>
+                                    <input type="hidden" name="choise" value="False"/>
+                                    <button class="btn btn-warning btn-block font-weight-light">ОТПИСАТЬСЯ</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="card-deck mt-4">
+                {% for course in summerpractice_list|slice:"3:6" %}
+                    <div class="card {% if user_id in course.id_registers %}bg-success text-white{% endif %}">
+                        <img class="card-img-top" src="{{ course.image.url }}" alt="Card image cap">
+                        <div class="card-body font-weight-light">
+                            <h5 class="card-title">{{ course.name }}</h5>
+                            <p class="card-text">{{ course.description }}</p>
+                        </div>
+                        <div class="card-footer font-weight-light">
+                            <p class="card-text">Дата начало курса: {{ course.date }}</p>
+                            <p class="card-text">Время начала курса: {{ course.time }}</p>
+                            {% if user_id not in course.id_registers and user_id not in all2 %}
+                                <form method="post">{% csrf_token %}
+                                    <input type="hidden" name="id" value="{{ user.id }}"/>
+                                    <input type="hidden" name="id_course" value="{{ course.id }}"/>
+                                    <input type="hidden" name="choise" value="True"/>
+                                    <button class="btn btn-success btn-block font-weight-light">ЗАПИСАТЬСЯ</button>
+                                </form>
+                            {% elif user_id in course.id_registers %}
+                                <form method="post">{% csrf_token %}
+                                    <input type="hidden" name="id" value="{{ user.id }}"/>
+                                    <input type="hidden" name="id_course" value="{{ course.id }}"/>
+                                    <input type="hidden" name="choise" value="False"/>
+                                    <button class="btn btn-warning btn-block font-weight-light">ОТПИСАТЬСЯ</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block detail_active_task %} active{% endblock %}

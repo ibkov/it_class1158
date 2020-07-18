@@ -91,6 +91,9 @@
                            href="https://events.educom.ru/calendar?onlyActual=false&pageNumber=1&search=&portalIds=21&portalIds=14">IT-СУББОТЫ</a>
                         <a class="dropdown-item" href="http://events.mosedu.ru">МЕРОПРИЯТИЯ ДЛЯ ИТ-КЛАССОВ</a>
                         <a class="dropdown-item" href="/hacaton">ХАКАТОН 1-11 МАЯ 2020г.</a>
+                        {% if user.is_authenticated and user.puples.status != "APP" %}
+                            <a class="dropdown-item" href="/summer_practice">ЛЕТНЯЯ ПРАКТИКА 2020г.</a>
+                        {% endif %}
                     </div>
                 </li>
                 {% if user.is_authenticated and user.puples.status != "APP" %}
@@ -106,9 +109,11 @@
                             ПАНЕЛЬ АДМИНИСТРАТОРА
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            {% if applicants_count != 0 %}<a class="dropdown-item" href="/applicant_list">СПИСОК КАНДИДАТОВ</a>{% endif %}
+                            {% if applicants_count != 0 %}
+                                <a class="dropdown-item" href="/applicant_list">СПИСОК КАНДИДАТОВ</a>{% endif %}
                             {% if events_new != 0 %}
-                                <a class="dropdown-item notification bg-info text-white mr-3{% block detail_active_checklist %}{% endblock %}"
+                                <a class="dropdown-item notification bg-info text-white mr-3
+                                        {% block detail_active_checklist %}{% endblock %}"
                                    href="/check_list"><span>СПИСОК
                             НА МОДЕРАЦИЮ</span>
                                 <span class="badge mr-3 mr-lg-0">{{ events_new }}</span>{% endif %}</a>

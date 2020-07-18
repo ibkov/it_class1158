@@ -24,7 +24,7 @@ SECRET_KEY = 'efgj!udo53#9=3dnuy3n%(=)$pdz-5@dv@me=dl1wky#&dhe$*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.14.103']
+ALLOWED_HOSTS = ['192.168.14.103', "127.0.0.1"]
 
 # Application definition
 
@@ -78,7 +78,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'itclass.wsgi.application'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-LOGIN_REDIRECT_URL =  'success/'
+LOGIN_REDIRECT_URL = 'success/'
 LOGOUT_REDIRECT_URL = '/'
 
 # Database
