@@ -384,5 +384,8 @@ class SummerPracticeAdminView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(SummerPractice.objects.all()[0].id_registers)
+        for i in range(6):
+            list_id = [j for j in map(int, SummerPractice.objects.all()[i].id_registers.split())]
+            context[f"list{i}"] = [Puples.objects.get(user_id=k) for k in list_id]
+            context[f"l{i}"] = len(list_id)
         return context
