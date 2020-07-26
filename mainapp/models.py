@@ -8,6 +8,7 @@ class Puples(models.Model):
         ('ST10', 'Ученик 10 ИТ-класса'),
         ('ST11', 'Ученик 11 ИТ-класса'),
         ('APP', 'Кандидат в ИТ-класс'),
+        ('TEACH', 'Учитель')
     )
 
     PROGRESS_CHOICES = (
@@ -27,13 +28,15 @@ class Puples(models.Model):
     status = models.CharField("Статуc", choices=STATUS_CHOICES, default='ST10', max_length=30)
     applicant_first_result = models.FloatField("Результат первого этапа", blank=True, default=0)
     applicant_progress = models.IntegerField(verbose_name="Прогресс", choices=PROGRESS_CHOICES, default=0, blank=True)
+    email = models.EmailField(verbose_name="Email", default="")
+    phone = models.CharField(max_length=12, verbose_name="Телефон", default="")
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = "Ученики"
-        verbose_name_plural = "Ученики"
+        verbose_name = "Пользователи"
+        verbose_name_plural = "Пользователи"
 
 
 class SummerPractice(models.Model):
@@ -65,8 +68,8 @@ class ApplicantAction(models.Model):
     action_app = models.ForeignKey(Puples, on_delete=models.SET_NULL, null=True, verbose_name="Кандидат")
 
     class Meta:
-        verbose_name = "Для кандидатов"
-        verbose_name_plural = "Для кандидатов"
+        verbose_name = "Кандидаты"
+        verbose_name_plural = "Кандидаты"
 
 
 class Events(models.Model):

@@ -1,7 +1,7 @@
 {% extends  'base.html' %}
 {% load static %}
 {% block main %}
-    {% if user.username == "ibkov" %}
+    {% if user.is_superuser %}
         {% if events_list.count != 0 %}
             <div class="table-responsive-sm table-responsive-md">
                 <table class="table text-center ">

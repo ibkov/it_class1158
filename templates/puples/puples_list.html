@@ -6,23 +6,23 @@
             <thead class="thead-dark">
             <tr>
                 <th></th>
-                <th class="text-left py-3">Фамилия</th>
-                <th class="text-left py-3">Имя</th>
-                <th class="py-3">Баллы</th>
+                <th class="text-left py-3" data-sort="string">Фамилия</th>
+                <th class="text-left py-3" data-sort="string">Имя</th>
+                <th class="py-3" data-sort="int">Баллы</th>
             </tr>
             </thead>
             {% for puple in puples_list %}
-                {% if puple.name != "-" and puple.status == user.puples.status or user.is_superuser and puple.name != "-" %}
-                    <tr{% if superusr or pupil_pk == puple.pk %}
-                        onclick="window.location.href='/statistic/pupil/{{ puple.id }}'; return false" {% endif %}
-                            {% if puple.surname == user.last_name %} class="table-warning" {% endif %}>
-                        <td><img src="{{ puple.image.url }}" alt="..." class="rounded-circle"
-                                 style="width: 75px; object-fit: cover; height:75px;"></td>
-                        <td class="text-left align-middle">{{ puple.surname }}</td>
-                        <td class="text-left align-middle">{{ puple.name }}</td>
-                        <td class="align-middle">{{ puple.rate }}</td>
-                    </tr>
-                {% endif %}
+                {% if puple.status == user.puples.status or superusr %}
+                        <tr{% if superusr or pupil_pk == puple.pk %}
+                            onclick="window.location.href='/statistic/pupil/{{ puple.id }}'; return false" {% endif %}
+                                {% if puple.surname == user.last_name %} class="table-warning" {% endif %}>
+                            <td><img src="{{ puple.image.url }}" alt="..." class="rounded-circle"
+                                     style="width: 75px; object-fit: cover; height:75px;"></td>
+                            <td class="text-left align-middle">{{ puple.surname }}</td>
+                            <td class="text-left align-middle">{{ puple.name }}</td>
+                            <td class="align-middle">{{ puple.rate }}</td>
+                        </tr>
+                    {% endif %}
             {% endfor %}
         </table>
     {% endif %}

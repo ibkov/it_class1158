@@ -18,11 +18,9 @@
                     <div class="col-12 py-3">
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <div class="custom-file col-12 pt-5">
-                                <div class="form-group">
+                            <div class="custom-file col-12">
                                     <input type="file" class="custom-file-input" id="customFile" name="image" required>
                                     <label class="custom-file-label" for="customFile">Выберите файл</label>
-                                </div>
                                 <script>
                                     $('#customFile').on('change', function () {
                                         //get the file name
@@ -32,9 +30,11 @@
                                     })
                                 </script>
                             </div>
-                            <div class="row no-gutters">
+                             <p class="text-muted font-weight-light mx-2 pt-1" style="font-size: 12px;">Вы можете сделать моментальную фотографию, если Ваше устройство
+                                    оснащено веб-камерой, или загрузить изображение в формате JPG, GIF или PNG.</p>
+                            <div class="row no-gutters p-0">
                                 <div class="col p-1">
-                                    <button type="submit" class="btn btn-primary btn-block btn-sm">Сохранить</button>
+                                    <button type="submit" class="btn btn-info btn-block btn-sm">Сохранить</button>
                                 </div>
                                 <div class="col p-1"><a class="btn btn-danger btn-block btn-sm"
                                                         href="/statistic/pupil/{{ puples.id }}" role="button">Отмена</a>
@@ -84,7 +84,7 @@
 
                         {% endfor %}
                     </table>
-                    <a class="btn btn-success btn-lg btn-block" href="add_events" role="button">Добавить новое
+                    <a class="btn btn-info btn-lg btn-block" href="add_events" role="button">Добавить новое
                         мероприятие</a>
                     <p class="my-3">Количество посещенных мероприятий: {{ events_count }} </p>
                     <p class="my-3">Общий рейтинг: {{ puples.rate }}</p>

@@ -11,7 +11,8 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from docxtpl import DocxTemplate
 
-from .forms import EventsForm, AddEventForm, ImgChangeForm
+from .addons_python.notifications import send_mail_to_applicant
+from .forms import EventsForm, AddEventForm, ImgChangeForm, CollectData
 from .models import Puples, Events, Works, DaysTask, ApplicantAction, SummerPractice
 
 
@@ -55,7 +56,7 @@ class TasksView(LoginRequiredMixin, ListView):
     model = DaysTask
     template_name = "task_day.html"
     mass_rate = [5, 3]
-    raise_exception = True
+    login_url = '/login/'
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated or request.user.puples.status == "APP":
@@ -114,7 +115,7 @@ class PuplesView(LoginRequiredMixin, ListView):
     puple = Puples
     template_name = "puples/puples_list.html"
     queryset = Puples.objects.order_by("-rate")
-    raise_exception = True
+    login_url = '/login/'
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated or request.user.puples.status == "APP":
@@ -140,7 +141,7 @@ class ApplicantListView(LoginRequiredMixin, ListView):
     puple = Puples
     template_name = "applicant_list.html"
     queryset = Puples.objects.filter(status="APP").order_by('-applicant_first_result')
-    raise_exception = True
+    login_url = '/login/'
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated or request.user.puples.status == "APP":
@@ -173,7 +174,7 @@ class ImgChangeView(LoginRequiredMixin, DetailView):
     model = Puples
     pk_url_kwarg = "pk"
     template_name = "img_change.html"
-    raise_exception = True
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -206,13 +207,20 @@ class PostDetailView(LoginRequiredMixin, DetailView):
     model = Puples
     pk_url_kwarg = "pk"
     template_name = "puple_detail/puples_detail_end.html"
-    raise_exception = True
+    login_url = '/login/'
 
     def post(self, request, pk):
-        a = ApplicantAction.objects.get(action_app=pk)
-        a.check = True
-        a.save()
-        return redirect("/statistic/pupil/" + str(pk))
+        form = CollectData(request.POST)
+        if form.is_valid():
+            a = Puples.objects.get(user=request.user.id)
+            form = CollectData(request.POST, instance=a)
+            form.save()
+            return redirect("/statistic/pupil/" + str(pk))
+        else:
+            a = ApplicantAction.objects.get(action_app=pk)
+            a.check = True
+            a.save()
+            return redirect("/statistic/pupil/" + str(pk))
 
     def get(self, request, pk):
         if request.user.is_superuser or request.user.puples.pk == pk:
@@ -225,6 +233,7 @@ class PostDetailView(LoginRequiredMixin, DetailView):
         context['events_new'] = Events.objects.filter(check=False).count()
         context['applicants_count'] = Puples.objects.filter(status="APP").count()
         context['allevents'] = Events.objects.filter(events__pk=self.kwargs['pk']).order_by('-date')
+        context['form'] = CollectData()
         if Puples.objects.get(pk=self.kwargs["pk"]).status == "APP":
             context['app'] = ApplicantAction.objects.get(action_app=self.kwargs['pk'])
         else:
@@ -238,7 +247,7 @@ class AddEventView(LoginRequiredMixin, DetailView):
     model = Puples
     pk_url_kwarg = "pk"
     template_name = "add_event/add_event.html"
-    raise_exception = True
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -271,7 +280,7 @@ class CheckList(LoginRequiredMixin, ListView):
     model = Events
     queryset = Events.objects.filter(check=False)
     template_name = "CheckList/check_list.html"
-    raise_exception = True
+    login_url = '/login/'
 
     def get(self, request):
         if request.user.is_superuser:
@@ -300,7 +309,7 @@ class CheckList(LoginRequiredMixin, ListView):
 class WorksView(LoginRequiredMixin, ListView):
     queryset = Works.objects.all()
     template_name = "works/works.html"
-    raise_exception = True
+    login_url = '/login/'
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated or request.user.puples.status == "APP":
@@ -353,12 +362,11 @@ class SummerPracticeView(LoginRequiredMixin, ListView):
     template_name = "summer_practice.html"
     queryset = SummerPractice.objects.all()
     login_url = '/login/'
-    redirect_field_name = 'summer_practice'
 
     def post(self, request):
         req = request.POST
         check = bool(req["choise"])
-        id_puple = str(req["id"] + ' ')
+        id_puple = str("|*" + req["id"] + "*|")
         list_id = SummerPractice.objects.get(id=request.POST['id_course'])
         if req["id"] not in list_id.id_registers and check:
             list_id.id_registers += id_puple
@@ -370,12 +378,13 @@ class SummerPracticeView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["user_id"] = str(self.request.user.id)
+        context["user_id"] = str("|*" + str(self.request.user.id) + "*|")
         context['events_new'] = Events.objects.filter(check=False).count()
         context['applicants_count'] = Puples.objects.filter(status="APP").count()
         context["all"] = " ".join([SummerPractice.objects.all()[i].id_registers for i in range(3)])
         context["all2"] = " ".join([SummerPractice.objects.all()[i].id_registers for i in range(3, 6)])
         return context
+
 
 class SummerPracticeAdminView(LoginRequiredMixin, ListView):
     template_name = "summer_practice_admin.html"
@@ -385,7 +394,27 @@ class SummerPracticeAdminView(LoginRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         for i in range(6):
-            list_id = [j for j in map(int, SummerPractice.objects.all()[i].id_registers.split())]
+            list_id = [int(j) for j in
+                       SummerPractice.objects.all()[i].id_registers.rstrip('|*').lstrip('*|').split("*||*")]
             context[f"list{i}"] = [Puples.objects.get(user_id=k) for k in list_id]
             context[f"l{i}"] = len(list_id)
+        context["time"] = dt.datetime.now()
         return context
+
+
+class NotificationsView(LoginRequiredMixin, ListView):
+    template_name = "notifications.html"
+    queryset = Puples.objects.all()
+    login_url = '/login/'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def post(self, request):
+        all_info = dict(request.POST)
+        id_puples_send = [int(i) for i in all_info["checkbox_puple"]]
+        email_list = [Puples.objects.get(user_id=i).email for i in id_puples_send]
+        send_mail_to_applicant(*all_info["theme_letter"], *all_info["header_letter"], *all_info["text_letter"],
+                               email_list)
+        return redirect("/notifications/")

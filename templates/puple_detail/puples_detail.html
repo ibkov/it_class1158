@@ -1,30 +1,42 @@
+{% load crispy_forms_tags %}
 {% block main %}
     {% load static %}
-    <div class="container-xl my-4 bg-light">
+    {% if puples.email != "" and puples.phone != "" or user.is_superuser %}
+        <div class="container-xl my-4 bg-light">
         <div class="row">
             <div class="col-12 col-xl-3 col-lg-3 col-md-3 col-sm-12">
                 <h3 class="my-3">
                     {{ puples.name }} {{ puples.surname }}
                 </h3>
-
                 <img src="{{ puples.image.url }}" class="img-fluid rounded">
-            {% if puples.image.url == "/media/puples_photo/user-2.png" %}
-                <p class="font-weight-light text-danger bg-light mt-3">Добавьте фотографию профиля</p>{% endif %}
+                {% if puples.image.url == "/media/puples_photo/user-2.png" %}
+                    <p class="font-weight-light text-danger bg-light mt-3">Добавьте фотографию профиля</p>{% endif %}
                 <div class="row py-2">
                     <!--                <div class="col-12 text-left"><a class="text-dark disabled" href="#">редактировать фотографию</a></div>-->
                     <div class="col-12"><a href="/statistic/pupil/{{ puples.pk }}/img-change/"
                                            class="btn btn-block btn-info btn-sm" role="button">
-                        {% if puples.image.url != "/media/puples_photo/user-2.png" %}Изменить{% else %}Добавить{% endif %} фотографию
+                        {% if puples.image.url != "/media/puples_photo/user-2.png" %}Изменить{% else %}
+                            Добавить{% endif %} фотографию
                         профиля</a></div>
                     <div class="col pt-1"><a href="/password-change/" class="btn btn-block btn-info btn-sm"
                                              role="button">Изменить
                         пароль учетной записи</a></div>
                 </div>
+                <p class="font-weight-light text-muted" style="font-size: 10px;">Моя почта: {{ puples.email }}<br>Мой
+                    телефон: {{ puples.phone }}</p>
+
+                <a href="https://t.me/joinchat/AAAAAFJI5PL5wZKFKSr4Fw" class="navbar-brand text-muted font-weight-light"
+                   style="font-size: 10px;"><img class="img-fluid mr-2"
+                                                 style="width: 15px; height:15px;"
+                                                 src="{% static '/images/telegram.png' %}">Присоедениться к
+                    телеграм
+                    каналу</a>
+
             </div>
             <div class="col">
                 <div class="row">
                     <h3 class="pt-3 col-12 col-lg-8">
-                        {% if puples.status == "ST10" or puples.status == "ST11" %}Список посещенных
+                        {% if puples.status != "APP" %}Список посещенных
                             мероприятий{% else %}
                             Вступительные испытания{% endif %}
                     </h3>
@@ -32,7 +44,7 @@
                     <p class="font-weight-light text-right mt-2 col">Статус: {{ puples.get_status_display }}</p>
 
                 </div>
-                {% if puples.status == "ST10" or puples.status == "ST11" %}
+                {% if puples.status != "APP" %}
                     <table class="table table-sm text-center my-4">
                         <thead class="thead text-center">
                         <tr>
@@ -63,7 +75,7 @@
                         {% endfor %}
                     </table>
 
-                    <a class="btn btn-success btn-lg btn-block" href="add_events" role="button">Добавить новое
+                    <a class="btn btn-info btn-lg btn-block btn-rounded" href="add_events" role="button">Добавить новое
                         мероприятие</a>
                     <p class="my-3">Количество посещенных мероприятий: {{ events_count }} </p>
                     <p class="my-3">Общий рейтинг(автоматический): {{ rate_event }}</p>
@@ -201,7 +213,7 @@
                         <p class="font-weight-light">Не теряй логин и пароль от своего личного кабинета кандидата,
                             потому что уже в августе твой личный кабинет превратится в кабинет ученика 10 ИТ-класса и
                             откроется больше возможностей.</p>
-                         <p class="font-weight-light">Если у тебя остались какие-то вопросы пиши нам на почту
+                        <p class="font-weight-light">Если у тебя остались какие-то вопросы пиши нам на почту
                             <a href="mailto:admin@it-class1158.site?subject=Вопрос от {{ puples.surname }} {{ puples.name }}">admin@it-class1158.site</a>
                         </p>
                     {% else %}
@@ -220,4 +232,24 @@
                 {% endif %}
             </div>
         </div>
+    {% else %}
+        <div class="row p-5">
+            <div class="col">
+                <h1 class="text-center font-weight-light">Сбор данных</h1>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title font-weight-light">Мы обновляем возможности системы и не нашли часть
+                            данных по твоему аккаунту, укажи пожалуйста актуальные данные ниже.</h5>
+                        <p class="font-weight-light text-muted">Укажите достоверные данные, потому что в основном для
+                            оповещения по событиям проекта, мы будем использовать данную систему.</p>
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button type="submit" class="btn btn-info btn-block">Войти</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
