@@ -11,7 +11,7 @@ smtp_host = "mail.hosting.reg.ru"
 login = "admin@it-class1158.site"
 password = "wsx123451"
 
-
+# функция отправки сообщений на почту
 def send_mail_to_applicant(theme_letter, header_letter, text_letter, recipients_email):
     for email in recipients_email:
         html = f"""\
@@ -44,11 +44,11 @@ def send_mail_to_applicant(theme_letter, header_letter, text_letter, recipients_
             print(msg)
             s.quit()
 
-
+# функция отправки сообщений в телеграмм канал {"ok":true,"result":{"message_id":3,"chat":{"id":-1001380508914,"title":"\u0418\u0442-\u043a\u043b\u0430\u0441\u0441","username":"it_class1158","type":"channel"},"date":1595839792,"text":"test"}}
 def send_telegram(text: str):
-    token = "ТУТ_ВАШ_ТОКЕН_КОТОРЫЙ_ВЫДАЛ_BotFather"
+    token = "1098094286:AAEAKeTsr0GDh8LlxW_M0O2zQhPMy_wW1tg"
     url = "https://api.telegram.org/bot"
-    channel_id = "@ИМЯ_КАНАЛА"
+    channel_id = "-1001380508914"
     url += token
     method = url + "/sendMessage"
 
@@ -59,6 +59,3 @@ def send_telegram(text: str):
 
     if r.status_code != 200:
         raise Exception("post_text error")
-
-if __name__ == '__main__':
-  send_telegram("hello world!")

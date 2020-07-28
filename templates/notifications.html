@@ -2,49 +2,8 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% block main %}
-
-    <script>
-        $(document).ready(function () {
-            function selection_row(odj) {
-                odj.on("click", function () {
-                    $(this).addClass("table-success");
-                    $(this).find('input[type=checkbox]').prop("checked", true);
-                });
-            }
-
-
-            $("#myTable tr").hide();
-            $("#myInput").on("keyup", function () {
-                var value = $(this).val().toLowerCase();
-                if (value.length == 0) {
-                    $("#myTable tr").hide();
-                } else {
-                    $("#myTable tr").filter(function () {
-                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                        selection_row($(this))
-                    });
-                }
-            });
-            var ch2 = true;
-            $("#AllButton").on('click', function (event) {
-                if (ch2) {
-                    event.preventDefault();
-                    $("#myTable tr").show("slow");
-                    selection_row($("#myTable tr"))
-                    $("#AllButton").addClass("active");
-                    $("#class10").removeClass("active");
-                    ch2 = !ch2;
-
-                } else {
-                    event.preventDefault();
-                    $("#myTable tr").hide("slow");
-                    $("#AllButton").removeClass("active");
-                    ch2 = !ch2;
-                }
-            });
-        })
-        ;
-    </script>
+    {% if user.is_superuser %}
+    <script src="{% static 'js/notatifications.js' %}"></script>
     <div class="container">
         <h2 class="font-weight-light pt-3">Оповещение участников проекта</h2>
         <hr>
@@ -64,6 +23,12 @@
                 <textarea class="form-control" name="text_letter" value="" id="text_letter" rows="5"
                           placeholder="Напишите текст"></textarea>
             </div>
+            <div class="form-group">
+                <label for="checkbox_telegram" class="mr-5">Опубликовать в телеграм-канал</label>
+                <input class="form-check-input align-middle" type="checkbox"
+                       name="checkbox_telegram" value="True"
+                       id="checkbox_telegram">
+            </div>
             <div class="form-group row pt-2">
                 <label for="exampleFormControlTextarea2" class="col-lg-2 align-baseline">Укажите получателя:</label>
                 <div class="col">
@@ -73,6 +38,7 @@
                     {#                    <button type="submit" class="btn btn-outline-secondary btn-sm mt-2">Ученики 11 класса</button>#}
                 </div>
             </div>
+
             <div class="form-group">
                 <table id="table" class="table table-sm text-center {% if user.is_superuser %}table-hover{% endif %}">
                     {% for puple in puples_list %}
@@ -98,6 +64,6 @@
             <button type="submit" class="btn btn-success mt-5">Отправить оповещение</button>
         </form>
     </div>
-    {{ form|crispy }}
+    {% endif %}
 {% endblock %}
 {% block detail_active_hach %} active{% endblock %}

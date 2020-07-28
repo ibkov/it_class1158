@@ -11,7 +11,7 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from docxtpl import DocxTemplate
 
-from .addons_python.notifications import send_mail_to_applicant
+from .addons_python.notifications import send_mail_to_applicant, send_telegram
 from .forms import EventsForm, AddEventForm, ImgChangeForm, CollectData
 from .models import Puples, Events, Works, DaysTask, ApplicantAction, SummerPractice
 
@@ -393,11 +393,15 @@ class SummerPracticeAdminView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
+        all_puples = []
         for i in range(6):
             list_id = [int(j) for j in
                        SummerPractice.objects.all()[i].id_registers.rstrip('|*').lstrip('*|').split("*||*")]
+            all_puples += list_id
             context[f"list{i}"] = [Puples.objects.get(user_id=k) for k in list_id]
             context[f"l{i}"] = len(list_id)
+        all_id_user = {i.user_id for i in Puples.objects.all()}
+        context["not_reg_puples"] = [Puples.objects.get(user_id=i) for i in all_id_user.difference(set(all_puples))]
         context["time"] = dt.datetime.now()
         return context
 
@@ -406,6 +410,7 @@ class NotificationsView(LoginRequiredMixin, ListView):
     template_name = "notifications.html"
     queryset = Puples.objects.all()
     login_url = '/login/'
+
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -417,4 +422,8 @@ class NotificationsView(LoginRequiredMixin, ListView):
         email_list = [Puples.objects.get(user_id=i).email for i in id_puples_send]
         send_mail_to_applicant(*all_info["theme_letter"], *all_info["header_letter"], *all_info["text_letter"],
                                email_list)
+        if "checkbox_telegram" in all_info:
+            theme, text = str(*all_info["theme_letter"]), str(*all_info["text_letter"])
+            all_mes = str(theme + "\n\n" + text)
+            send_telegram(all_mes)
         return redirect("/notifications/")
