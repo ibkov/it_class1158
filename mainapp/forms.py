@@ -31,3 +31,6 @@ class CollectData(forms.ModelForm):
     class Meta:
         model = Puples
         fields = ("email", "phone")
+
+class Notifications(forms.ModelForm):
+    theme = forms.CharField(label="Тема")

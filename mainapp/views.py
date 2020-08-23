@@ -12,7 +12,7 @@ from django.views.generic.detail import DetailView
 from docxtpl import DocxTemplate
 
 from .addons_python.notifications import send_mail_to_applicant, send_telegram
-from .forms import EventsForm, AddEventForm, ImgChangeForm, CollectData
+from .forms import EventsForm, AddEventForm, ImgChangeForm, CollectData, Notifications
 from .models import Puples, Events, Works, DaysTask, ApplicantAction, SummerPractice
 
 

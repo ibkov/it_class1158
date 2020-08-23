@@ -64,6 +64,7 @@
             <button type="submit" class="btn btn-success mt-5">Отправить оповещение</button>
         </form>
     </div>
+        {{ form|crispy }}
     {% endif %}
 {% endblock %}
 {% block detail_active_hach %} active{% endblock %}
