@@ -78,7 +78,7 @@ class Events(models.Model):
     organization = models.CharField("Название организации", max_length=300)
     events = models.ForeignKey(Puples, verbose_name="Мероприятия", on_delete=models.SET_NULL, null=True)
     check = models.BooleanField(default=False)
-    event_rate = models.PositiveIntegerField(default=1)
+    event_rate = models.IntegerField(default=0)
     verification_file = models.FileField(upload_to="verification_files/", null=True, verbose_name="Файл")
 
     def __str__(self):
