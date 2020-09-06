@@ -12,7 +12,7 @@ from django.views.generic.detail import DetailView
 from docxtpl import DocxTemplate
 
 from .addons_python.notifications import send_mail_to_applicant, send_telegram
-from .forms import EventsForm, AddEventForm, ImgChangeForm, CollectData, Notifications
+from .forms import EventsForm, AddEventForm, ImgChangeForm, CollectData
 from .models import Puples, Events, Works, DaysTask, ApplicantAction, SummerPractice
 
 
@@ -427,3 +427,23 @@ class NotificationsView(LoginRequiredMixin, ListView):
             all_mes = str(theme + "\n\n" + text)
             send_telegram(all_mes)
         return redirect("/notifications/")
+
+class MainStudentView(LoginRequiredMixin, ListView):
+    template_name = "main_student.html"
+    queryset = Puples.objects.all()
+    login_url = '/login/'
+
+    def get_context_data(self, **kwargs):
+        mass = [i[0] for i in Puples.objects.order_by("-rate").values_list('id')]
+        for i in mass:
+            pup = Puples.objects.get(id=i)
+            pup.rate = sum(map(lambda x: x.event_rate, Events.objects.filter(events__pk=i, check=True)))
+            pup.save()
+
+        context = super().get_context_data(**kwargs)
+        context['superusr'] = self.request.user.is_superuser
+        context['pupil_pk'] = self.request.user.puples.pk
+        context['events_new'] = Events.objects.filter(check=False).count()
+        context['applicants_count'] = Puples.objects.filter(status="APP").count()
+        context['date'] = dt.datetime.now().date()
+        return context

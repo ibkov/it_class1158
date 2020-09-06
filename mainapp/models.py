@@ -8,6 +8,7 @@ class Puples(models.Model):
         ('ST10', 'Ученик 10 ИТ-класса'),
         ('ST11', 'Ученик 11 ИТ-класса'),
         ('APP', 'Кандидат в ИТ-класс'),
+        ('MAIN_ST10', 'Cтароста 10 ИТ-класса'),
         ('TEACH', 'Учитель')
     )
 
@@ -20,7 +21,7 @@ class Puples(models.Model):
     )
     name = models.CharField("Имя", null=True, max_length=50)
     surname = models.CharField("Фамилия", null=True, max_length=100)
-    rate = models.PositiveIntegerField("Рейтинг ученика", default=0)
+    rate = models.IntegerField("Рейтинг ученика", default=0)
     image = models.ImageField("Фотография профиля", blank=True, upload_to="puples_photo",
                               default="puples_photo/user-2.png")
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, default='',

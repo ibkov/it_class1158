@@ -1,0 +1,41 @@
+{% extends  'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block main %}
+    {% if user.puples.status == "MAIN_ST10" %}
+    <div class="container-fuild py-3">
+        <h2 class="text-center font-weight-light text-uppercase">Кабинет старосты класса</h2>
+        {% if user.username != "" %}
+            <table class="table table-sm text-center table-hover table-responsive-sm table-responsive-md">
+                <thead class="thead-dark">
+                <tr>
+                    <th></th>
+                    <th class="text-left py-3" data-sort="string">Фамилия</th>
+                    <th class="text-left py-3" data-sort="string">Имя</th>
+                    <th class="py-3" data-sort="int">Данные</th>
+                    <th class="py-3" data-sort="int">Отсутствует сегодня {{ date }} </th>
+                </tr>
+                </thead>
+                {% for puple in puples_list %}
+                    {% if puple.status == "ST10" or puple.status == "MAIN_ST10" %}
+                        <tr{% if superusr or pupil_pk == puple.pk %}
+                            onclick="window.location.href='/statistic/pupil/{{ puple.id }}'; return false" {% endif %}
+                                {% if puple.surname == user.last_name %} class="table-warning" {% endif %}>
+                            <td><img src="{{ puple.image.url }}" alt="..." class="rounded-circle"
+                                     style="width: 75px; object-fit: cover; height:75px;"></td>
+                            <td class="text-left align-middle">{{ puple.surname }}</td>
+                            <td class="text-left align-middle">{{ puple.name }}</td>
+                            <td class="align-middle">{{ puple.phone }}<br>{{ puple.email }}</td>
+                            <td class="align-middle">-</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        {% endif %}
+    {% else %}
+        <br>
+     <h4 class="text-center font-weight-light text-uppercase">Кабинет старосты класса доступен только для старосты класса</h4>
+    {% endif %}
+    </div>
+{% endblock %}
+{% block detail_active_hach %} active{% endblock %}

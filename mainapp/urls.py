@@ -24,4 +24,5 @@ urlpatterns = [
     path("summer_practice/", views.SummerPracticeView.as_view(), name="summer_practice"),
     path("summer_practice/admin", views.SummerPracticeAdminView.as_view(), name="summer_practice_admin"),
     path("notifications/", views.NotificationsView.as_view(), name="summer_practice_admin"),
+    path("main_student/", views.MainStudentView.as_view(), name="main_student"),
 ]
